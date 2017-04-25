@@ -1,0 +1,14 @@
+MNIST simulation in C++
+
+4/25/2017
+So for now I am going to simulate a recurrent Neural
+Network that runs the benchmark MNIST handwritten
+number catagorization test. I'm making this git
+repository so I am able to work in the lab as well
+as from the dorm or the library. The steps I will
+take to complete this will be as follows. 
+1.) Design solution on paper and review past work
+2.) make program
+
+Obviously there will be parts 1.1 and 2.1 but thats
+a later problem. 
