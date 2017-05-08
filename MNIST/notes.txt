@@ -11,4 +11,20 @@ take to complete this will be as follows.
 2.) make program
 
 Obviously there will be parts 1.1 and 2.1 but thats
-a later problem. 
+a later problem.
+
+5/8/2017
+Beginning to create the NN in C++ initially focusing
+on the ability to read the appropreate MNIST data
+set and return the information in array structures
+that I can process accordingly. Still re-learning
+the versatilites of vim and will need to either 
+write my own matrix math functions or if I can
+leverage MATLAB and its highly developed matrix lib.
+
+Would like to finish the research and the Stanford
+CS231n Convolutional Neural Networks online lecture
+notes analysis by this Thursday and fully understood
+my end goal design by this Friday. Today though I
+want to have the read function and finish many notes
+
