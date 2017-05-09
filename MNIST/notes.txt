@@ -28,3 +28,12 @@ notes analysis by this Thursday and fully understood
 my end goal design by this Friday. Today though I
 want to have the read function and finish many notes
 
+5/9/2017
+Learned more of the basics yesterday of construction
+of my neural net, and I'll look to implement some
+cool features as well as some nessacary ones. Really
+need to hone down today on how I am going to handle
+my matrix algebra. Most likely will use Eigen as it
+has very little setup and has lots of support info
+online. Today will also try to address how to read
+mnist file. 
