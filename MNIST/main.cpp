@@ -15,13 +15,12 @@
 
 #include <iostream>
 #include "basic_neuron.h"
-//#include <stdlib>
 
 using namespace std;
 
 int main(int argc, char **argv){
 
-    	nn_Neuron *test1 = new nn_Neuron(0.3);
+    nn_Neuron *test1 = new nn_Neuron(0.3);
 	nn_Neuron *test2 = new nn_Neuron(0.1);
 	nn_Neuron *test3 = new nn_Neuron(-0.4);
 
