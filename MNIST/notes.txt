@@ -36,4 +36,18 @@ need to hone down today on how I am going to handle
 my matrix algebra. Most likely will use Eigen as it
 has very little setup and has lots of support info
 online. Today will also try to address how to read
-mnist file. 
+mnist file.
+
+Design update:: 
+My original idea of placing all of my code within
+one call function may be misguided and I'll try to 
+approach the problem from a different point of view.
+I will be making two programs. One that creates and
+teaches a neural network from random weights and 
+trains those weights to to MNIST dataset, then
+records those datapoints into a seperate file 
+(most likely binary) then run a second program that
+constructs a neural network with priviously 
+generated weights and test the accuracy of those
+weights on the test MNIST dataset, outputting a 
+percent error readout.::
