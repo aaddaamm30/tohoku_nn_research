@@ -52,13 +52,13 @@ public:
 
 	//ReLu derivitive function
 	//
-	//	   | 1, if x>0
+	//		   | 1, if x>0
 	// f'(x) = |
-	//	   | 0, otherwise
+	//		   | 0, otherwise
 	//
 	//source: Jeremy Kawahara 5/17/2016
-	void ReLU_derive();
 
+	void ReLU_derive();
 	//getters
  	double get_n_Val(){
 		return this->n_Val;

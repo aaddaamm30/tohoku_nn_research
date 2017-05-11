@@ -2,7 +2,7 @@
 *
 *	read_mnist.h
 *
-*	last updated: 5/9/2017 Adam (sky dream) Loo
+*	last updated: 5/11/2017 Adam (sky dream) Loo
 *
 *	description:
 *	header to describe a custom mnist reader
@@ -12,7 +12,10 @@
 *	return a vector based class with different 
 *	size for either test or train data grabs
 *	only offers 2 functions that both return
-*	a pointer to the same type of class
+*	a pointer to a vector of vectors. Each
+*	vector represents a an image and each
+*	vector vector respresents the data and 
+*	label for said image.
 *
 ************************************************/
 
@@ -20,26 +23,27 @@
 #define _MNIST_ILLITERATE_
 
 #include <iostream>
+#include <vector>
+#include <Eigen/Dense>
+
 using namespace std;
+using namespace Eigen;
+class mnist_block{
 
-// this is a class declaration that 
-// will be used to navigate the MNIST
-// dataset
-
-class mnist_set{
 public:
 	
+	//constructor for train and test
+	mnist_block(int i);
 
+	//getters
+	Eigen::MatrixXd getImgI(int i);
+	int getLblI(int i);
+	
 private:
-
-	//private constructor as only pointer is passed
-	//to main network structure
+	
+	//parallel vectors of images and labels
+	vector<Eigen::MatrixXd> img;
+	vector<int> lbl;
 }
-
-//function to return a mnist_set pointer for training
-*mnist_set read_mnist_train();
-
-//function to return a mnist_set pointer for testing
-*mnist_set read_mnist_test(); 
 
 #endif
