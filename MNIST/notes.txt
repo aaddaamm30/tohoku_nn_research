@@ -51,3 +51,11 @@ constructs a neural network with priviously
 generated weights and test the accuracy of those
 weights on the test MNIST dataset, outputting a 
 percent error readout.::
+
+5/11/2017
+To complete today: finish MNIST dataset reader 
+functions to be used in both test and train 
+processes. If that gets finished then begin first
+layer of train neural net. Finished readings on 
+gradient decent and calulating loss functions so
+hopefully implentation of that today can happen.
