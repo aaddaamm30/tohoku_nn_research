@@ -59,3 +59,9 @@ processes. If that gets finished then begin first
 layer of train neural net. Finished readings on 
 gradient decent and calulating loss functions so
 hopefully implentation of that today can happen.
+
+good resource, and develop python mnist to better
+understand:
+neuralnetworksanddeeplearning.com
+
+
