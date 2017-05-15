@@ -60,8 +60,18 @@ layer of train neural net. Finished readings on
 gradient decent and calulating loss functions so
 hopefully implentation of that today can happen.
 
+
 good resource, and develop python mnist to better
 understand:
 neuralnetworksanddeeplearning.com
+
+=======
+5/12/2017
+Got system set up on home computer, can now work
+from home. Still not sure if thats an acceptable
+way to do work for this Japanese work lab
+environment. Today finishing up reading mnist
+piece. Also get neural net flow by making program
+in python with numpy linear algebra engine.
 
 
