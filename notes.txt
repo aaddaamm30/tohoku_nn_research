@@ -1,0 +1,97 @@
+MNIST simulation in C++
+
+============
+4/25/2017
+So for now I am going to simulate a recurrent Neural
+Network that runs the benchmark MNIST handwritten
+number catagorization test. I'm making this git
+repository so I am able to work in the lab as well
+as from the dorm or the library. The steps I will
+take to complete this will be as follows. 
+1.) Design solution on paper and review past work
+2.) make program
+
+Obviously there will be parts 1.1 and 2.1 but thats
+a later problem.
+
+============
+5/8/2017
+Beginning to create the NN in C++ initially focusing
+on the ability to read the appropreate MNIST data
+set and return the information in array structures
+that I can process accordingly. Still re-learning
+the versatilites of vim and will need to either 
+write my own matrix math functions or if I can
+leverage MATLAB and its highly developed matrix lib.
+
+Would like to finish the research and the Stanford
+CS231n Convolutional Neural Networks online lecture
+notes analysis by this Thursday and fully understood
+my end goal design by this Friday. Today though I
+want to have the read function and finish many notes
+
+============
+5/9/2017
+Learned more of the basics yesterday of construction
+of my neural net, and I'll look to implement some
+cool features as well as some nessacary ones. Really
+need to hone down today on how I am going to handle
+my matrix algebra. Most likely will use Eigen as it
+has very little setup and has lots of support info
+online. Today will also try to address how to read
+mnist file.
+
+Design update:: 
+My original idea of placing all of my code within
+one call function may be misguided and I'll try to 
+approach the problem from a different point of view.
+I will be making two programs. One that creates and
+teaches a neural network from random weights and 
+trains those weights to to MNIST dataset, then
+records those datapoints into a seperate file 
+(most likely binary) then run a second program that
+constructs a neural network with priviously 
+generated weights and test the accuracy of those
+weights on the test MNIST dataset, outputting a 
+percent error readout.::
+
+===========
+5/11/2017
+To complete today: finish MNIST dataset reader 
+functions to be used in both test and train 
+processes. If that gets finished then begin first
+layer of train neural net. Finished readings on 
+gradient decent and calulating loss functions so
+hopefully implentation of that today can happen.
+
+
+good resource, and develop python mnist to better
+understand:
+neuralnetworksanddeeplearning.com
+
+============
+5/12/2017
+Got system set up on home computer, can now work
+from home. Still not sure if thats an acceptable
+way to do work for this Japanese work lab
+environment. Today finishing up reading mnist
+piece. Also get neural net flow by making program
+in python with numpy linear algebra engine.
+
+================
+5/15/2017
+Today will have finished reader function and will
+try to get output clear and effective. 
+The goal will be to work out the nuances of the 
+way EIGEN works and the ability to effectivly 
+use the eigen::matrixXd object for linear algebra
+for the simulation of a neural layer, datastream
+and output. If I get there i may finish up by
+starting the baseline design of the training
+program and the command line inputs I will be 
+requiring and using. If I'm good enough I might 
+just make it one program that has two different 
+input flags that indicate both training and
+testing.
+
+
