@@ -2,7 +2,7 @@
 *
 *	read_mnist.h
 *
-*	last updated: 5/11/2017 Adam (sky dream) Loo
+*	last updated: 5/15/2017 Adam (sky dream) Loo
 *
 *	description:
 *	header to describe a custom mnist reader
@@ -26,24 +26,26 @@
 #include <vector>
 #include <Eigen/Dense>
 
-using namespace std;
-using namespace Eigen;
 class mnist_block{
 
 public:
 	
 	//constructor for train and test
-	mnist_block(int i);
+	mnist_block(int);
 
+	//setters
+	int setImgVec(*std::vector<Eigen::MatrixXd>);
+	int setLblVec(*std::vector<int>);
+	
 	//getters
-	Eigen::MatrixXd getImgI(int i);
-	int getLblI(int i);
+	Eigen::MatrixXd getImgI(int);
+	int getLblI(int);
 	
 private:
 	
 	//parallel vectors of images and labels
-	vector<Eigen::MatrixXd> img;
-	vector<int> lbl;
-}
+	std::vector<Eigen::MatrixXd> *img;
+	std::vector<int> *lbl;
+};
 
 #endif
