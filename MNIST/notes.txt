@@ -1,5 +1,6 @@
 MNIST simulation in C++
 
+============
 4/25/2017
 So for now I am going to simulate a recurrent Neural
 Network that runs the benchmark MNIST handwritten
@@ -13,6 +14,7 @@ take to complete this will be as follows.
 Obviously there will be parts 1.1 and 2.1 but thats
 a later problem.
 
+============
 5/8/2017
 Beginning to create the NN in C++ initially focusing
 on the ability to read the appropreate MNIST data
@@ -28,6 +30,7 @@ notes analysis by this Thursday and fully understood
 my end goal design by this Friday. Today though I
 want to have the read function and finish many notes
 
+============
 5/9/2017
 Learned more of the basics yesterday of construction
 of my neural net, and I'll look to implement some
@@ -52,6 +55,7 @@ generated weights and test the accuracy of those
 weights on the test MNIST dataset, outputting a 
 percent error readout.::
 
+===========
 5/11/2017
 To complete today: finish MNIST dataset reader 
 functions to be used in both test and train 
@@ -65,7 +69,7 @@ good resource, and develop python mnist to better
 understand:
 neuralnetworksanddeeplearning.com
 
-=======
+============
 5/12/2017
 Got system set up on home computer, can now work
 from home. Still not sure if thats an acceptable
@@ -73,5 +77,21 @@ way to do work for this Japanese work lab
 environment. Today finishing up reading mnist
 piece. Also get neural net flow by making program
 in python with numpy linear algebra engine.
+
+================
+5/15/2017
+Today will have finished reader function and will
+try to get output clear and effective. 
+The goal will be to work out the nuances of the 
+way EIGEN works and the ability to effectivly 
+use the eigen::matrixXd object for linear algebra
+for the simulation of a neural layer, datastream
+and output. If I get there i may finish up by
+starting the baseline design of the training
+program and the command line inputs I will be 
+requiring and using. If I'm good enough I might 
+just make it one program that has two different 
+input flags that indicate both training and
+testing.
 
 
