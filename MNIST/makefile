@@ -18,3 +18,7 @@ CC=g++
 #Perform action on all object files
 all: $(OBJECTS)
 	$(CC) $(CXXFLAGS) -o $(EXEC) $(OBJECTS)
+
+#clean action
+clean: 
+	rm read_mnist.o
