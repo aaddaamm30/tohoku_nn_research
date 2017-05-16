@@ -1,23 +1,15 @@
-/***************************************
+/****************************************************************
 *
-*	read_mnist.cpp 
+*	File		: read_mnist.cpp
+*	Description	: Supporting code for data reader functions. Can 
+*				  be used to return convenient structures with 
+*				  MNIST images and labels using Eigen vector and
+*				  matrix objects.
+*				  
+*	Author		: Adam Loo
+*	Last Edited	: Tue May 16 2017
 *
-*	last updated: 5/15/2017 Adam Loo
-* 
-*	Description:
-*	supporting code for data reader
-*	functions. Can be used to return
-*	convenient structures with MNIST 
-*	images and labels. The type that
-*	the input will be defined as is
-*	going to be a vector of matricies.
-*	Specifically vector types with all
-*	image data layed out in a one
-*	dimentional array like a vector.
-*	Each matrix will be 1X
-*
-****************************************/
-
+****************************************************************/
 #include <iostream>
 #include <vector>
 #include <string>
@@ -25,31 +17,38 @@
 #include <fstream>
 #include "read_mnist.h"
 
+
 //prototypes
 int switchIt(int);
-int readData(std::string, std::string);
-int loadUpImgs(std::string);
-int loadUpLbls(std::string);
+
+/*
+int readData(void);
+int loadUpImgs(void);
+int loadUpLbls(void);
+*/ 
 
 //constructor function
 mnist_block::mnist_block(int i){
 
 	//input i will either be 1 to indicate training
-	//or a 2 for testing. And the datapath for images
+	//or a 0 for testing. And the datapath for images
 	//and labels will be set appropreately
 	std::string pImgData = "";
 	std::string pLblData = "";
 
 	if(i == 1){
-		pImgData = "../train_data/train-images-idx3-ubyte";
-		pLblData = "../train_data/train-labels-idx3-ubyte";
+		if(this->setPaths("../train_data/train-images-idx3-ubyte",
+						 "../train_data/train-labels-idx3-ubyte"))
+			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
 	}else if(i == 0){
-		pImgData = "../test_data/t10k-images-idx3-ubyte";
-		pLblData = "../test_data/t10k-labels-idx3-ubyte";	
+		if(this->setPaths("../test_data/t10k-images-idx3-ubyte",
+						 "../test_data/t10k-labels-idx3-ubyte"))
+			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
+
 	}
 
 	//function to decode and read data into matrix and label
-	if(readData(pImgData, pLblData)){
+	if(this->readData()){
 		std::cout << "ERROR: readData fx failure " << std::endl;
 	}
 
@@ -57,17 +56,17 @@ mnist_block::mnist_block(int i){
 
 //function that reads any amount of data into
 //appropreate vector<Eigen::MatrixXd> size
-int readData(std::string imgPath, std::string lblPath){
+int mnist_block::readData(void){
 	
 	//variables to hold onto size
 	//set and fill the matrix vector array function
-	if(loadUpImgs(imgPath)){
+	if(this->loadUpImgs()){
 		std::cout << "ERROR: loudUpImg fx failure " << std::endl;
 		return(1);
 	}
 	
 	//set and fill the label vector
-	if(loadUpLbls(lblPath)){
+	if(this->loadUpLbls()){
 		std::cout << "ERROR: loadUpLbls fx failure" << std::endl;
 		return(1);
 	}
@@ -81,9 +80,10 @@ int readData(std::string imgPath, std::string lblPath){
 //and uses encoded information to size appropreate vector
 //and then fills the mnist_block class img matrix vectors with
 //correct data
-int loadUpImgs(std::string path){
-	
+int mnist_block::loadUpImgs(void){
+		
 	//declare varbs
+	std::string path = this->getImgPath();
 	int magic_number = 0;
 	int n_images = 0;
 	int n_rows = 0;
@@ -102,9 +102,9 @@ int loadUpImgs(std::string path){
 		file.read((char*)&n_cols, sizeof(n_cols));
 		n_cols = switchIt(n_cols);				//get number of colums
 		
-		//resize vector
-		this->img.resize(n_images, Eigen::MatrixXd m((n_rows*n_cols), 1));
-		
+		//create vector
+		Eigen::MatrixXd m(n_images, (n_rows*n_cols));
+	
 		//read through rest of data and input into each matrix
 		for(int i = 0; i < n_images; ++i){
 			for(int j = 0; j < n_rows; ++j){
@@ -112,9 +112,14 @@ int loadUpImgs(std::string path){
 
 					unsigned char tmp = 0;
 					file.read((char*)&tmp, sizeof(tmp));
-					this->img[i](((n_rows*j)+k), 0) = (double)tmp;
+					m(i, ((n_rows*j)+k)) = (double)tmp;
 				}
 			}
+		}
+
+		if(this->setImgVec(&m)){
+			std::cout<<"ERROR: setting class image datablock"<<std::endl;
+			return(1);
 		}
 	}
 
@@ -125,8 +130,10 @@ int loadUpImgs(std::string path){
 //function that loads up all labels into vector type
 //with the appropreate label values at corrosponding indexes
 //of the imgage vector
-int loadUpLbls(std::string path){
-	
+int mnist_block::loadUpLbls(void){
+
+	//variable declarations
+	std::string path = this->getLblPath();	
 	int magic_number = 0;
 	int n_labels = 0;
 
@@ -139,15 +146,20 @@ int loadUpLbls(std::string path){
 		file.read((char*)&n_labels, sizeof(n_labels));
 		n_labels = switchIt(n_labels);			//get number of labels
 
-		//resize vector
-		this->lbl.resize(n_labels);
-		
+		//creating vector
+		Eigen::VectorXi v(n_labels);
+			
 		//read through rest of data and add to vector
 		for(int i = 0; i < n_labels; i++){
 			
 			unsigned char tmp = 0;
 			file.read((char*)&tmp, sizeof(tmp));
-			this->lbl[i] = (int)tmp;
+			v(i) = (int)tmp;
+		}
+
+		if(this->setLblVec(&v)){
+			std::cout<<"ERROR: setting class label vector"<<std::endl;
+			return(1);
 		}
 	}
 
@@ -170,4 +182,19 @@ int switchIt(int i){
 		  (int)ch4;
 	
 	return(y);
+}
+
+//setter declaration
+int mnist_block::setPaths(std::string pics, std::string labels){
+	this->pImgData = pics;
+	this->pLblData = labels;
+	return(0);
+}
+int mnist_block::setImgVec(Eigen::MatrixXd* in){
+	this->img = in;
+	return(0);
+}
+int mnist_block::setLblVec(Eigen::VectorXi* in){
+	this->lbl = in;
+	return(0);
 }
