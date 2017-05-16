@@ -94,4 +94,9 @@ just make it one program that has two different
 input flags that indicate both training and
 testing.
 
-
+================
+5/16/2017
+Re-factoring the way to handle the mnist_block
+class so that smoother setters and getters. The
+'this' usage needs to be redone into usable
+functions.
