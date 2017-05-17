@@ -100,3 +100,11 @@ Re-factoring the way to handle the mnist_block
 class so that smoother setters and getters. The
 'this' usage needs to be redone into usable
 functions.
+
+================
+5/17/2017
+Pulled most recent version of project from
+github and continued to work on the main file
+with a focus on the flag functionality. Start
+designing the integration of the network and 
+the way it works within itself. 
