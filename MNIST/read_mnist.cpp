@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Tue May 18 2017
+*	Last Edited	: Thu May 18 2017
 *
 ****************************************************************/
 
