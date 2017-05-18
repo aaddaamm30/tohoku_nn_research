@@ -7,9 +7,10 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Tue May 16 2017
+*	Last Edited	: Tue May 18 2017
 *
 ****************************************************************/
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -20,12 +21,6 @@
 
 //prototypes
 int switchIt(int);
-
-/*
-int readData(void);
-int loadUpImgs(void);
-int loadUpLbls(void);
-*/ 
 
 //constructor function
 mnist_block::mnist_block(int i){
