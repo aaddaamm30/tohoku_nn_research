@@ -1,6 +1,6 @@
 /****************************************************************
 *
-*	File		: nn_conductor.h
+*	File		: nn_conductor.cpp
 *	Description	: header file of the main facilitating operation
 *				  of the neural network. These functions are used
 *				  from the main function and have access to all
@@ -13,17 +13,3 @@
 *	Last Edited	: Thu May 18 2017
 *
 ****************************************************************/
-#ifndef _NEURAL_NETWORK_CONDUCTOR_
-#define _NEURAL_NETWORK_CONDUCTOR_
-
-#include <iostream>
-#include <Eigen/Dense>
-
-class neural_conductor{
-
-	public:
-
-	private:
-}
-
-#endif
