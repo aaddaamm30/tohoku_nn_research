@@ -36,4 +36,4 @@ nn_conductor.o: nn_conductor.cpp nn_conductor.h read_mnist.h
 
 #clean action
 clean: 
-	rm -f read_mnist.o nn_driver.o neuralNetwork
+	rm -f nn_conductor.o read_mnist.o nn_driver.o neuralNetwork
