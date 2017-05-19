@@ -108,3 +108,28 @@ github and continued to work on the main file
 with a focus on the flag functionality. Start
 designing the integration of the network and 
 the way it works within itself. 
+
+================
+5/19/2017
+In an effort to work in an object oriented
+way I must rethink the interaction that the mnist
+reader class is used. I would like to just have
+two instances, one with testing data and one with
+training data, but with the duality of a program that
+can do testing and training two different ways with
+the just a change of flag may make that a problem.
+If I integrate that in the lowest level though then
+I could abstract that out and the extra data should
+not be a yuge slow down. It is just a factor of o(1)
+of an increase and force my process to use a lot more
+data than probably expected. Ultimately the functions
+with NN specific  functions, gradient decent, feed
+forward processes and stuff like backpropogation
+need to be slightly better understood for me to be
+able to effectively integrate a network. Also if I
+sit down and design the network out a bit better in
+terms of what layers do what and how many I want will
+be good in planning out the project layout. This
+weekend I will most likely be doing japanese but I
+will finish some reading on networks from the book 
+that sensei lent me. 

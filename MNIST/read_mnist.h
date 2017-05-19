@@ -12,7 +12,7 @@
 *				  for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Tue May 16 2017
+*	Last Edited	: Fri May 18 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_
@@ -30,8 +30,8 @@ public:
 	mnist_block(int);
 	
 	//getters
-	Eigen::MatrixXd getImgI(int);
-	Eigen::VectorXi getLblI(int);
+	Eigen::VectorXi getImgI(int);
+	int getLblI(int);
 	std::string getImgPath(){
 		return(this->pImgData);
 	}

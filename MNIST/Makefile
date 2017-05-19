@@ -17,7 +17,7 @@ EXEC=neuralNetwork
 #may need to add libraries
 
 #filespecs
-SOURCES=read_mnist.o nn_driver.o nn_conductor.o
+SOURCES=read_mnist.o nn_driver.o nn_engine.o
 
 #make some shit
 all: $(SOURCES)  $(EXEC)
@@ -31,9 +31,9 @@ read_mnist.o: read_mnist.cpp read_mnist.h
 nn_driver.o: nn_driver.cpp
 	$(CC) $(CXXFLAGS) nn_driver.cpp
 
-nn_conductor.o: nn_conductor.cpp nn_conductor.h read_mnist.h
-	$(CC) $(CXXFLAGS) nn_conductor.cpp
+nn_engine.o: nn_engine.cpp nn_engine.h read_mnist.h
+	$(CC) $(CXXFLAGS) nn_engine.cpp
 
 #clean action
 clean: 
-	rm -f nn_conductor.o read_mnist.o nn_driver.o neuralNetwork
+	rm -f nn_engine.o read_mnist.o nn_driver.o neuralNetwork

@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Thu May 18 2017
+*	Last Edited	: Fri May 19 2017
 *
 ****************************************************************/
 
@@ -46,6 +46,15 @@ mnist_block::mnist_block(int i){
 	if(this->readData()){
 		std::cout << "ERROR: readData fx failure " << std::endl;
 	}
+
+}
+
+//public getter methods that returns a single case of a an image vector
+Eigen::VectorXi mnist_block::getImgI(int i){
+
+	Eigen::VectorXi hVec = (Eigen::VectorXi)this->*img[i];
+
+	return hVec;
 
 }
 
