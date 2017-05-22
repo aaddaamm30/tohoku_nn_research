@@ -8,7 +8,7 @@
 *				  pre trained weigths as well.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Thu May 18 2017
+*	Last Edited	: Mon May 22 2017
 *
 ****************************************************************/
 
@@ -21,8 +21,6 @@
 #define USAGE \
 	"MNIST neural Network --- Tohoku University Research\n" \
 	"Author: Adam Loo\n\n" \
-	"NOTE: Network only accepts one operation at\n" \
-	"	   a time and will fail otherwise.\n" \
 	"USAGE: run_network [-h] [-u <system>] [-train] [-test] <weights-file>\n" \
 	"	-h ~ display help\n" \
 	"	-u ~ unit test specific part of network\n" \
@@ -42,8 +40,9 @@
 	"		file that either is used as weight\n" \
 	"		output in the case of training or\n" \
 	"		input in the case of testing the\n" \
-	"		network\n" \
-	"\n" \
+	"		network\n\n" \
+	"NOTE: Network only accepts one operation at\n" \
+	"      a time and will fail otherwise.\n" \
 
 //prototypes
 

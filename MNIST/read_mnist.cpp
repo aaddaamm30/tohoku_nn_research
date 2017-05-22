@@ -50,12 +50,12 @@ mnist_block::mnist_block(int i){
 }
 
 //public getter methods that returns a single case of a an image vector
-Eigen::VectorXi mnist_block::getImgI(int i){
+Eigen::MatrixXd* mnist_block::getImgI(void){
+	return(this->img);
+}
 
-	Eigen::VectorXi hVec = (Eigen::VectorXi)this->*img[i];
-
-	return hVec;
-
+Eigen::VectorXi* mnist_block::getLblI(void){
+	return(this->lbl);
 }
 
 //function that reads any amount of data into
@@ -108,6 +108,12 @@ int mnist_block::loadUpImgs(void){
 		
 		//create vector
 		Eigen::MatrixXd m(n_images, (n_rows*n_cols));
+		
+		//push setnum vals
+		if(this->set_num_data(n_images))
+			return(1);
+		if(this->set_size_data(n_rows, n_cols))
+			return(1);
 	
 		//read through rest of data and input into each matrix
 		for(int i = 0; i < n_images; ++i){
@@ -152,7 +158,11 @@ int mnist_block::loadUpLbls(void){
 
 		//creating vector
 		Eigen::VectorXi v(n_labels);
-			
+
+		//setting numvals		
+		if(this->set_num_data(n_labels))
+			return(1);
+
 		//read through rest of data and add to vector
 		for(int i = 0; i < n_labels; i++){
 			
@@ -200,5 +210,14 @@ int mnist_block::setImgVec(Eigen::MatrixXd* in){
 }
 int mnist_block::setLblVec(Eigen::VectorXi* in){
 	this->lbl = in;
+	return(0);
+}
+int mnist_block::set_num_data(int i){
+	this->num_data = i;
+	return(0);
+}
+int mnist_block::set_size_data(int x, int y){
+	this->num_row = x;
+	this->num_col = y;
 	return(0);
 }

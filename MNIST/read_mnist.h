@@ -8,11 +8,11 @@
 *				  based class with different size for both test 
 *				  or train data grabs. Only offers 2 functions 
 *				  that return a pointer to an eigen matrix 
-*				  (double) for the images and an eigen vector (int) 
-*				  for the labels.
+*				  (double) for the images and an eigen vector 
+*				  (int) for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Fri May 18 2017
+*	Last Edited	: Mon May 22 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_
@@ -30,15 +30,21 @@ public:
 	mnist_block(int);
 	
 	//getters
-	Eigen::VectorXi getImgI(int);
-	int getLblI(int);
-	std::string getImgPath(){
+	Eigen::MatrixXd* getImgI(void);
+	Eigen::VectorXi* getLblI(void);
+	std::string getImgPath(void){
 		return(this->pImgData);
 	}
-	std::string getLblPath(){
+	std::string getLblPath(void){
 		return(this->pLblData);
 	}
-	
+	int how_many_data(void){
+		return(this->num_data);
+	}
+	int how_deep_data(void){
+		return((this->num_row)*(this->num_col));
+	}
+
 private:
 
 	//functions used just by constructor
@@ -48,6 +54,13 @@ private:
 	int setImgVec(Eigen::MatrixXd*);
 	int setLblVec(Eigen::VectorXi*);
 	int setPaths(std::string, std::string);
+	int set_num_data(int);
+	int set_size_data(int, int);
+
+	//info about data
+	int num_data = 0;
+	int num_row = 0;
+	int num_col = 0;
 	
 	//parallel vectors of images and labels
 	Eigen::MatrixXd *img;
