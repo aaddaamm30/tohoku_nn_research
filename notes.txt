@@ -133,3 +133,16 @@ be good in planning out the project layout. This
 weekend I will most likely be doing japanese but I
 will finish some reading on networks from the book 
 that sensei lent me. 
+
+==================
+5/22/2017
+Details of NN equations derivations are clearer, and
+easier to understand after a weekend of thinking
+over them. Implementation on a conceptual level makes
+practical sense but the nuances of Eigen types (matrix
+transposition, managemennt, access and save) and ood
+classification techniques, I will still need to hone
+out. I want to finish the engine class that should
+only really provide the functions. On top of that
+all the data, matrix and managemet work should be 
+done by inheretance.
