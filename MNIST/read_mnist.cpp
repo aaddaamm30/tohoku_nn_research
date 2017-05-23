@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Fri May 19 2017
+*	Last Edited	: Tue May 23 2017
 *
 ****************************************************************/
 
@@ -108,12 +108,6 @@ int mnist_block::loadUpImgs(void){
 		
 		//create vector
 		Eigen::MatrixXd m(n_images, (n_rows*n_cols));
-		
-		//push setnum vals
-		if(this->set_num_data(n_images))
-			return(1);
-		if(this->set_size_data(n_rows, n_cols))
-			return(1);
 	
 		//read through rest of data and input into each matrix
 		for(int i = 0; i < n_images; ++i){
@@ -158,10 +152,6 @@ int mnist_block::loadUpLbls(void){
 
 		//creating vector
 		Eigen::VectorXi v(n_labels);
-
-		//setting numvals		
-		if(this->set_num_data(n_labels))
-			return(1);
 
 		//read through rest of data and add to vector
 		for(int i = 0; i < n_labels; i++){

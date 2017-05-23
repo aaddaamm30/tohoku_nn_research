@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon May 22 2017
+*	Last Edited	: Tue May 23 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -29,16 +29,24 @@
 class neural_backbone{
 
 	public:
+		
 	protected:
 			
 		int setMatrixWeights(Eigen::MatrixXd,
 							 Eigen::MatrixXd, 
 							 Eigen::MatrixXd);
-		Eigen::MatrixXd pass
+		
+	//private attributes of abstract class neural_backbone
 	private:
-		//class neural backbone
+		
+		//give access to mnist data blocks
 		mnist_block training_block = new mnist_block(1);
 		mnist_block testing_block = new mnist_block(0);
+
+		//values for network to use for stuff?
+		double step_size = 0;
+		double batch_size = 0;
+		
 }
 
 #endif

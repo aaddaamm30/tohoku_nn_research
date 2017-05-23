@@ -12,14 +12,13 @@
 *				  (int) for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon May 22 2017
+*	Last Edited	: Tue May 23 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_
 #define _MNIST_ILLITERATE_
 
 #include <iostream>
-#include <vector>
 #include <Eigen/Dense>
 
 class mnist_block{
@@ -38,12 +37,6 @@ public:
 	std::string getLblPath(void){
 		return(this->pLblData);
 	}
-	int how_many_data(void){
-		return(this->num_data);
-	}
-	int how_deep_data(void){
-		return((this->num_row)*(this->num_col));
-	}
 
 private:
 
@@ -56,11 +49,6 @@ private:
 	int setPaths(std::string, std::string);
 	int set_num_data(int);
 	int set_size_data(int, int);
-
-	//info about data
-	int num_data = 0;
-	int num_row = 0;
-	int num_col = 0;
 	
 	//parallel vectors of images and labels
 	Eigen::MatrixXd *img;
