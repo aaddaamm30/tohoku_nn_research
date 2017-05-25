@@ -146,3 +146,27 @@ out. I want to finish the engine class that should
 only really provide the functions. On top of that
 all the data, matrix and managemet work should be 
 done by inheretance.
+
+==================
+5/25/2017
+Building up the read driver which will take care of 
+the reading and writing to files. I'm goin to also
+use it to be in charge of the top level weight 
+randomization, file creation and info validation.
+Will only check for corruption but will not check
+for correct matrix size or matrix values. Will
+be a black box for the nn_engine and will just be 
+used at the beginning and the end to set the matrix
+pointers. ALL WEIGHT MATRICIES WILL BE CREATED IN
+THIS OBJECT. THIS CLASS WILL ONLY BE PASSED ALREADY
+EXISTING MATRIX POINTERS ON A WRITE OPERATION. Idk 
+maybe this isn't the correct way to go about it but
+on paper and in my head it seem like it will work.
+I am almost at the point where all my tools will be
+in front of me and I can implement the network 
+math. Should not be that hard, biggest issues I'm 
+expecting to run into are segfaults caused by
+pointer mishandling, transpose operation (please
+god let eigen have a method) and batch management.
+
+
