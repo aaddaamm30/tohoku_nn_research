@@ -7,12 +7,11 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Tue May 23 2017
+*	Last Edited	: Thu May 25 2017
 *
 ****************************************************************/
 
 #include <iostream>
-#include <vector>
 #include <string>
 #include <Eigen/Dense>
 #include <fstream>
@@ -200,14 +199,5 @@ int mnist_block::setImgVec(Eigen::MatrixXd* in){
 }
 int mnist_block::setLblVec(Eigen::VectorXi* in){
 	this->lbl = in;
-	return(0);
-}
-int mnist_block::set_num_data(int i){
-	this->num_data = i;
-	return(0);
-}
-int mnist_block::set_size_data(int x, int y){
-	this->num_row = x;
-	this->num_col = y;
 	return(0);
 }
