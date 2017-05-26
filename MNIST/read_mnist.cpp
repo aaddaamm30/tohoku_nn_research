@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Thu May 25 2017
+*	Last Edited	: Fri May 26 2017
 *
 ****************************************************************/
 
@@ -15,13 +15,16 @@
 #include <string>
 #include <Eigen/Dense>
 #include <fstream>
+#include <iomanip>
 #include "read_mnist.h"
 
 
 //prototypes
 int switchIt(int);
 
+///////////////////////////////////////////////////////////////////////////
 //constructor function
+///////////////////////////////////////////////////////////////////////////
 mnist_block::mnist_block(int i){
 
 	//input i will either be 1 to indicate training
@@ -34,11 +37,14 @@ mnist_block::mnist_block(int i){
 		if(this->setPaths("../train_data/train-images-idx3-ubyte",
 						 "../train_data/train-labels-idx3-ubyte"))
 			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
+		if(this->set_UnitTest("train_data_unit.txt"))
+			std::cout << "ERROR: setting unit.txt failure" << std::endl;
 	}else if(i == 0){
 		if(this->setPaths("../test_data/t10k-images-idx3-ubyte",
 						 "../test_data/t10k-labels-idx3-ubyte"))
 			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
-
+		if(this->set_UnitTest("test_data_unit.txt"))
+			std::cout << "ERROR: setting unit.txt failure" << std::endl;
 	}
 
 	//function to decode and read data into matrix and label
@@ -48,7 +54,9 @@ mnist_block::mnist_block(int i){
 
 }
 
+///////////////////////////////////////////////////////////////////////////
 //public getter methods that returns a single case of a an image vector
+///////////////////////////////////////////////////////////////////////////
 Eigen::MatrixXd* mnist_block::getImgI(void){
 	return(this->img);
 }
@@ -57,8 +65,10 @@ Eigen::VectorXi* mnist_block::getLblI(void){
 	return(this->lbl);
 }
 
+///////////////////////////////////////////////////////////////////////////
 //function that reads any amount of data into
 //appropreate vector<Eigen::MatrixXd> size
+///////////////////////////////////////////////////////////////////////////
 int mnist_block::readData(void){
 	
 	//variables to hold onto size
@@ -79,10 +89,12 @@ int mnist_block::readData(void){
 		
 }
 
+///////////////////////////////////////////////////////////////////////////
 //function that takes file path input to mnist img data
 //and uses encoded information to size appropreate vector
 //and then fills the mnist_block class img matrix vectors with
 //correct data
+///////////////////////////////////////////////////////////////////////////
 int mnist_block::loadUpImgs(void){
 		
 	//declare varbs
@@ -130,9 +142,12 @@ int mnist_block::loadUpImgs(void){
 	return(0);
 }
 
+
+///////////////////////////////////////////////////////////////////////////
 //function that loads up all labels into vector type
 //with the appropreate label values at corrosponding indexes
 //of the imgage vector
+///////////////////////////////////////////////////////////////////////////
 int mnist_block::loadUpLbls(void){
 
 	//variable declarations
@@ -170,7 +185,9 @@ int mnist_block::loadUpLbls(void){
 	return(0);	
 }
 
+///////////////////////////////////////////////////////////////////////////
 //helper fuction to put into msb
+///////////////////////////////////////////////////////////////////////////
 int switchIt(int i){
 
 	unsigned char ch1, ch2, ch3, ch4;
@@ -187,7 +204,48 @@ int switchIt(int i){
 	return(y);
 }
 
+///////////////////////////////////////////////////////////////////////////
+//UNIT TEST TIME :)
+// - unit test that creates a txt file output with a single mnist image
+// 	 vector and label and also prints out to the console size information
+//	 and other helpfull info. Evectively tests the read feature, the number
+//	 of values read in, and creates a text file of a vector at random.
+///////////////////////////////////////////////////////////////////////////
+int mnist_block::run_unit(void){
+
+	//get working vectors and matrixes
+	Eigen::MatrixXd* image = getImgI();
+	Eigen::VectorXi* label = getLblI();
+	int stella = rand() % image->cols();
+
+	std::cout << "In mnist_block class unit test\n\n";
+	std::cout << "Number of image vectors: " << image->cols() << std::endl;
+	std::cout << "Size of image vectors: " << image->rows() << std::endl;
+	std::cout << "Number of labels: " << label->rows() << std::endl;
+	
+	//print randomized vector and label to txt file
+	std::ofstream unitfile;
+	unitfile.open(getFilePath());
+	unitfile << "This is unit test output.\n\n"
+			 << "Below is 28 X 28 matrix that represents the number " 
+			 << (*label)(stella) << std::endl << std::endl;
+	
+	for(int n = 0; n < 28; n++){
+		for(int j = 0; j < 28; j++){
+			unitfile << std::setw(3) << (*image)((n*28)+j, stella) << " ";
+		}
+		unitfile << std::endl;
+	}
+	
+	std::cout << "Printed vector and label of data " 
+			  << stella << " to " << getFilePath() << std::endl;
+
+	return(0);	//be successfull my yung padawan
+}
+
+///////////////////////////////////////////////////////////////////////////
 //setter declaration
+///////////////////////////////////////////////////////////////////////////
 int mnist_block::setPaths(std::string pics, std::string labels){
 	this->pImgData = pics;
 	this->pLblData = labels;
@@ -199,5 +257,9 @@ int mnist_block::setImgVec(Eigen::MatrixXd* in){
 }
 int mnist_block::setLblVec(Eigen::VectorXi* in){
 	this->lbl = in;
+	return(0);
+}
+int mnist_block::set_UnitTest(std::string fileName){
+	this->unit_file_name = fileName;
 	return(0);
 }

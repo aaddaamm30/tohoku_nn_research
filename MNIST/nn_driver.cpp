@@ -8,14 +8,15 @@
 *				  pre trained weigths as well.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Mon May 22 2017
+*	Last Edited	: Fri May 26 2017
 *
 ****************************************************************/
 
 //includes
 #include <iostream>
 #include "read_mnist.h"
-
+#include "weight_driver.h"
+#include "nn_engine.h"
 
 // Define section
 #define USAGE \
@@ -59,11 +60,9 @@
 *
 *************************************************************/
 
-int main( int argc, char **argv){
-
-	//traking variables
+int main(int argc, char **argv){
 	
-	if(argc < 2 || argc > 3){
+	if(argc < 2 || argc > 4){
 		std::cout << "ERROR: invalid command line argments (use [-h] for help)" << std::endl << std::endl;
 		return(1);
 	}
@@ -76,7 +75,19 @@ int main( int argc, char **argv){
 
 	//case of unit test request
 	if((std::string)argv[1] == "-u"){
-		//unit test functions here
+		
+		//runs unit test on a block to check correct matrix creation
+		if((std::string)argv[2] == "r" && argc == 3){
+			mnist_block* testBlock = new mnist_block(0);
+			testBlock->run_unit();
+			mnist_block* trainBlock = new mnist_block(1);
+			trainBlock->run_unit();
+			return(0);
+		}else if((std::string)argv[2] == "r" && argc != 3){
+			std::cout << "ERROR: invalid command line argments (use [-h] for help)" << std::endl << std::endl;
+			return(1);
+		}
+			
 		return(0);
 	}
 

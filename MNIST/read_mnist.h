@@ -12,7 +12,7 @@
 *				  (int) for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu May 25 2017
+*	Last Edited	: Fri May 26 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_
@@ -37,6 +37,14 @@ public:
 	std::string getLblPath(void){
 		return(this->pLblData);
 	}
+	std::string getFilePath(void){
+		return(this->unit_file_name);
+	}
+
+	//unit test that outputs valuable information to the console
+	//and also creates a txt file with vector information for one
+	//training vector/label and one testing vector/label
+	int run_unit(void);
 
 private:
 
@@ -47,8 +55,7 @@ private:
 	int setImgVec(Eigen::MatrixXd*);
 	int setLblVec(Eigen::VectorXi*);
 	int setPaths(std::string, std::string);
-	int set_num_data(int);
-	int set_size_data(int, int);
+	int set_UnitTest(std::string);
 	
 	//parallel vectors of images and labels
 	Eigen::MatrixXd *img;
@@ -56,7 +63,7 @@ private:
 
 	std::string pImgData = "";
 	std::string pLblData = "";
-
+	std::string unit_file_name = "";
 };
 
 #endif

@@ -10,7 +10,7 @@
 #environment
 P="../eigen3/"
 CC=g++
-CXXFLAGS=-std=c++11 -c -Wall -I $P
+CXXFLAGS=-std=c++11 -g -c -Wall -I $P
 LINKARGS=-g
 EXEC=neuralNetwork
 

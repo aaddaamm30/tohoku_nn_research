@@ -44,8 +44,8 @@ class neural_backbone{
 	private:
 		
 		//give access to mnist data blocks
-		mnist_block training_block = new mnist_block(1);
-		mnist_block testing_block = new mnist_block(0);
+		mnist_block *training_block = new mnist_block(1);
+		mnist_block *testing_block = new mnist_block(0);
 
 		//values for network to use for stuff?
 		double step_size = 0;
