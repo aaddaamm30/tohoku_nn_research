@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Fri May 26 2017
+*	Last Edited	: Sat May 27 2017
 *
 ****************************************************************/
 
@@ -16,6 +16,7 @@
 #include <Eigen/Dense>
 #include <fstream>
 #include <iomanip>
+#include <cstdlib>
 #include "read_mnist.h"
 
 
@@ -116,9 +117,9 @@ int mnist_block::loadUpImgs(void){
 		n_rows = switchIt(n_rows);				//get number of rows
 		file.read((char*)&n_cols, sizeof(n_cols));
 		n_cols = switchIt(n_cols);				//get number of colums
-		
+	
 		//create vector
-		Eigen::MatrixXd m(n_images, (n_rows*n_cols));
+		Eigen::MatrixXd m((n_rows*n_cols), n_images);
 	
 		//read through rest of data and input into each matrix
 		for(int i = 0; i < n_images; ++i){
@@ -127,11 +128,11 @@ int mnist_block::loadUpImgs(void){
 
 					unsigned char tmp = 0;
 					file.read((char*)&tmp, sizeof(tmp));
-					m(i, ((n_rows*j)+k)) = (double)tmp;
+					m(((n_rows*j)+k), i) = (double)tmp;
 				}
 			}
 		}
-
+		
 		if(this->setImgVec(&m)){
 			std::cout<<"ERROR: setting class image datablock"<<std::endl;
 			return(1);
@@ -175,6 +176,7 @@ int mnist_block::loadUpLbls(void){
 			v(i) = (int)tmp;
 		}
 
+		std::cout << v << std::endl;
 		if(this->setLblVec(&v)){
 			std::cout<<"ERROR: setting class label vector"<<std::endl;
 			return(1);
@@ -216,7 +218,10 @@ int mnist_block::run_unit(void){
 	//get working vectors and matrixes
 	Eigen::MatrixXd* image = getImgI();
 	Eigen::VectorXi* label = getLblI();
-	int stella = rand() % image->cols();
+	
+	int stella = 10;//std::rand() % image->cols();
+
+	std::cout << "image values: " << image << std::endl;
 
 	std::cout << "In mnist_block class unit test\n\n";
 	std::cout << "Number of image vectors: " << image->cols() << std::endl;
@@ -225,7 +230,7 @@ int mnist_block::run_unit(void){
 	
 	//print randomized vector and label to txt file
 	std::ofstream unitfile;
-	unitfile.open(getFilePath());
+	unitfile.open(this->getFilePath());
 	unitfile << "This is unit test output.\n\n"
 			 << "Below is 28 X 28 matrix that represents the number " 
 			 << (*label)(stella) << std::endl << std::endl;
@@ -238,7 +243,7 @@ int mnist_block::run_unit(void){
 	}
 	
 	std::cout << "Printed vector and label of data " 
-			  << stella << " to " << getFilePath() << std::endl;
+			  << stella << " to " << this->getFilePath() << std::endl;
 
 	return(0);	//be successfull my yung padawan
 }

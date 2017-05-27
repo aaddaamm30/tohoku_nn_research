@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Fri May 26 2017
+*	Last Edited	: Sat May 27 2017
 *
 ****************************************************************/
 
@@ -18,7 +18,9 @@
 #include <unistd.h>
 #include "weight_driver.h"
 
+/////////////////////////////////////////////////////////////////////
 //identifies if there is the appropreate .txt ending to a string
+/////////////////////////////////////////////////////////////////////
 int validateFileName(std::string f_name){
 	
 	int i = f_name.length();
@@ -42,32 +44,47 @@ int validateFileName(std::string f_name){
 	return(0);
 }
 
+/////////////////////////////////////////////////////////////////////
 //creates three 784 X 784 matrices and on 10 X 784
 //and initializes them all to random values between [.3, .7]
 //(this value may be fun to play with in the future)
+/////////////////////////////////////////////////////////////////////
 int file_io::randomizeWeights(Eigen::MatrixXd* w1,
 							  Eigen::MatrixXd* w2,
 							  Eigen::MatrixXd* w3,
 							  Eigen::MatrixXd* o4){
 
-	Eigen::MatrixXd a(784, 784);
-	Eigen::MatrixXd b(784, 784);
-	Eigen::MatrixXd c(784, 784);
-	Eigen::MatrixXd d(784, 784);
-	Eigen::MatrixXd o(10, 784);
+	Eigen::MatrixXd a(500, 784);
+	Eigen::MatrixXd b(1000, 500);
+	Eigen::MatrixXd c(5000, 1000);
+	Eigen::MatrixXd d(50, 5000);
+	Eigen::MatrixXd o(10, 50);
 
-	for(int i = 0; i < 784; i++){
-		for(int j = 0; j < 784; j++){
-			a(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) + .3);
-			b(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) + .3);
-			c(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) + .3);
-			d(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) + .3);
+	//randomizing values between -.5 and .5
+	for(int i = 0; i < a.rows(); i++){
+		for(int j = 0; j < a.cols(); j++){
+			a(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+		}
+	}
+	for(int i = 0; i < b.rows(); i++){
+		for(int j = 0; j < b.cols(); j++){
+			b(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+		}
+	}
+	for(int i = 0; i < c.rows(); i++){
+		for(int j = 0; j < c.cols(); j++){
+			c(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+		}
+	}
+	for(int i = 0; i < d.rows(); i++){
+		for(int j = 0; j < d.cols(); j++){
+			d(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
 		}
 	}
 
-	for(int i = 0; i < 10; i++){
-		for(int j = 0; j < 784; j++){
-			o(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) + .3);
+	for(int i = 0; i < o.rows(); i++){
+		for(int j = 0; j < o.cols(); j++){
+			o(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
 		}
 	}
 
@@ -80,7 +97,9 @@ int file_io::randomizeWeights(Eigen::MatrixXd* w1,
 	return(0);
 }
 
+/////////////////////////////////////////////////////////////////////
 //file writes data to .txt file according to example.txt doc specs
+/////////////////////////////////////////////////////////////////////
 int file_io::writeWeights(Eigen::MatrixXd* w1,
 						  Eigen::MatrixXd* w2,
 						  Eigen::MatrixXd* w3,
@@ -176,7 +195,9 @@ int file_io::readWeights(Eigen::MatrixXd* w1,
 	return(0);
 }
 
+/////////////////////////////////////////////////////////////////////
 //basic test to see if a file exists or not
+/////////////////////////////////////////////////////////////////////
 bool file_io::file_exists(std::string& f_name){
 	return(access(f_name.c_str(), F_OK) != -1);
 }
