@@ -79,8 +79,8 @@ int main(int argc, char **argv){
 		//runs unit test on a block to check correct matrix creation
 		if((std::string)argv[2] == "r" && argc == 3){
 			mnist_block* testBlock = new mnist_block(0);
-			testBlock->run_unit();
 			mnist_block* trainBlock = new mnist_block(1);
+			testBlock->run_unit();
 			trainBlock->run_unit();
 			return(0);
 		}else if((std::string)argv[2] == "r" && argc != 3){

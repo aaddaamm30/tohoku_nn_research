@@ -119,8 +119,11 @@ int mnist_block::loadUpImgs(void){
 		n_cols = switchIt(n_cols);				//get number of colums
 	
 		//create vector
-		Eigen::MatrixXd m((n_rows*n_cols), n_images);
-	
+		Eigen::MatrixXd* m = new Eigen::MatrixXd;
+		m->resize((n_cols*n_rows), n_images);
+		
+		//std::cout << "n_imgs: " << n_images << std::endl;	
+		//std::cout << "matrix (row, col): (" << m->rows() << ", " << m->cols() << ")" << std::endl;	
 		//read through rest of data and input into each matrix
 		for(int i = 0; i < n_images; ++i){
 			for(int j = 0; j < n_rows; ++j){
@@ -128,12 +131,15 @@ int mnist_block::loadUpImgs(void){
 
 					unsigned char tmp = 0;
 					file.read((char*)&tmp, sizeof(tmp));
-					m(((n_rows*j)+k), i) = (double)tmp;
+					//std::cout<<std::setw(3)<<(double)tmp;
+					(*m)(((n_rows*j)+k), i) = (double)tmp;
 				}
+				//std::cout<<std::endl;
 			}
+			//std::cout<<"\n\n"<<i<<std::endl;
 		}
 		
-		if(this->setImgVec(&m)){
+		if(this->setImgVec(m)){
 			std::cout<<"ERROR: setting class image datablock"<<std::endl;
 			return(1);
 		}
@@ -166,18 +172,19 @@ int mnist_block::loadUpLbls(void){
 		n_labels = switchIt(n_labels);			//get number of labels
 
 		//creating vector
-		Eigen::VectorXi v(n_labels);
+		Eigen::VectorXi* v = new Eigen::VectorXi;
+		v->resize(n_labels);
 
 		//read through rest of data and add to vector
 		for(int i = 0; i < n_labels; i++){
 			
 			unsigned char tmp = 0;
 			file.read((char*)&tmp, sizeof(tmp));
-			v(i) = (int)tmp;
+			(*v)(i) = (int)tmp;
 		}
 
-		std::cout << v << std::endl;
-		if(this->setLblVec(&v)){
+		//std::cout << v << std::endl;
+		if(this->setLblVec(v)){
 			std::cout<<"ERROR: setting class label vector"<<std::endl;
 			return(1);
 		}
@@ -222,11 +229,11 @@ int mnist_block::run_unit(void){
 	int stella = 10;//std::rand() % image->cols();
 
 	std::cout << "image values: " << image << std::endl;
-
+	//std::cout << "break stuff? " << *image << std::endl;
 	std::cout << "In mnist_block class unit test\n\n";
 	std::cout << "Number of image vectors: " << image->cols() << std::endl;
 	std::cout << "Size of image vectors: " << image->rows() << std::endl;
-	std::cout << "Number of labels: " << label->rows() << std::endl;
+	std::cout << "Number of labels: " << label->size() << std::endl;
 	
 	//print randomized vector and label to txt file
 	std::ofstream unitfile;
