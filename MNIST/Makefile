@@ -40,3 +40,7 @@ weight_driver.o: weight_driver.cpp weight_driver.h
 #clean action
 clean: 
 	rm -f nn_engine.o read_mnist.o nn_driver.o weight_driver.o neuralNetwork
+
+#remove unit test data
+unit:
+	rm -f train_data_unit.txt test_data_unit.txt

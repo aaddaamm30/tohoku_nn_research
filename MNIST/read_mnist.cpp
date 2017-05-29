@@ -36,13 +36,13 @@ mnist_block::mnist_block(int i){
 
 	if(i == 1){
 		if(this->setPaths("../train_data/train-images-idx3-ubyte",
-						 "../train_data/train-labels-idx3-ubyte"))
+						 "../train_data/train-labels-idx1-ubyte"))
 			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
 		if(this->set_UnitTest("train_data_unit.txt"))
 			std::cout << "ERROR: setting unit.txt failure" << std::endl;
 	}else if(i == 0){
 		if(this->setPaths("../test_data/t10k-images-idx3-ubyte",
-						 "../test_data/t10k-labels-idx3-ubyte"))
+						 "../test_data/t10k-labels-idx1-ubyte"))
 			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
 		if(this->set_UnitTest("test_data_unit.txt"))
 			std::cout << "ERROR: setting unit.txt failure" << std::endl;
@@ -84,7 +84,6 @@ int mnist_block::readData(void){
 		std::cout << "ERROR: loadUpLbls fx failure" << std::endl;
 		return(1);
 	}
-	
 	//if successful read
 	return(0); 
 		
@@ -122,8 +121,6 @@ int mnist_block::loadUpImgs(void){
 		Eigen::MatrixXd* m = new Eigen::MatrixXd;
 		m->resize((n_cols*n_rows), n_images);
 		
-		//std::cout << "n_imgs: " << n_images << std::endl;	
-		//std::cout << "matrix (row, col): (" << m->rows() << ", " << m->cols() << ")" << std::endl;	
 		//read through rest of data and input into each matrix
 		for(int i = 0; i < n_images; ++i){
 			for(int j = 0; j < n_rows; ++j){
@@ -131,12 +128,9 @@ int mnist_block::loadUpImgs(void){
 
 					unsigned char tmp = 0;
 					file.read((char*)&tmp, sizeof(tmp));
-					//std::cout<<std::setw(3)<<(double)tmp;
 					(*m)(((n_rows*j)+k), i) = (double)tmp;
 				}
-				//std::cout<<std::endl;
 			}
-			//std::cout<<"\n\n"<<i<<std::endl;
 		}
 		
 		if(this->setImgVec(m)){
@@ -165,7 +159,6 @@ int mnist_block::loadUpLbls(void){
 	//first open file
 	std::ifstream file (path, std::ios::binary);
 	if(file.is_open()){
-
 		file.read((char*)&magic_number, sizeof(magic_number));
 		magic_number = switchIt(magic_number);	//get magic number
 		file.read((char*)&n_labels, sizeof(n_labels));
@@ -189,7 +182,6 @@ int mnist_block::loadUpLbls(void){
 			return(1);
 		}
 	}
-
 	//if successfull
 	return(0);	
 }
