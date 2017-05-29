@@ -169,4 +169,24 @@ expecting to run into are segfaults caused by
 pointer mishandling, transpose operation (please
 god let eigen have a method) and batch management.
 
+==================
+5/29/2017
+Worked a bit over the weekend so now I have unit
+tests for the mnist block class which passes in
+the current state as well as I have a test that
+runs through data randomization and printing it 
+to a .txt file visually. I'll have the read
+portion done tomorrow and after that I will
+implement the actuall network :)) yippee!! cool
+that I'm almost there and once I am I expect
+a good number of issues but I have a very good
+working knowledge of neural networks at this 
+point and any issue I run into theoretically I
+can find the answer to it somehow. Also I think
+I have regained my skills on C++ as well so
+things should begin to run quit a bit smoother
+now. Today had a bit of a run in with pointers
+but I got that figured out. Pointers to pointers
+are a thing of beauty. Japanese test wednesday. 
+god rest my soul. 
 

@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Sat May 27 2017
+*	Last Edited	: Mon May 29 2017
 *
 ****************************************************************/
 
@@ -16,15 +16,15 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <iomanip>
 #include "weight_driver.h"
 
 /////////////////////////////////////////////////////////////////////
 //identifies if there is the appropreate .txt ending to a string
 /////////////////////////////////////////////////////////////////////
-int validateFileName(std::string f_name){
+int file_io::validateFileName(std::string f_name){
 	
 	int i = f_name.length();
-	char tmp[5];
 	
 	//error check file name size
 	if(i < 5){
@@ -32,10 +32,9 @@ int validateFileName(std::string f_name){
 				  << "missing \".txt\" file descriptor.\n" << std::endl;
 		return(1);
 	}
-
-	std::size_t length = f_name.copy(tmp, (i - 4));
-	tmp[length] = '\0';
-	if(strncmp(tmp, ".txt", 4) != 0){
+	
+	if(!(f_name[i-1] == 't' && f_name[i-2] == 'x' &&
+	   f_name[i-3] == 't' && f_name[i-4] == '.')){
 		std::cout << "ERROR: file input string not \".txt\" type. " 
 				  << "Must be of \".txt\" type.\n" << std::endl;
 		return(1);
@@ -45,54 +44,52 @@ int validateFileName(std::string f_name){
 }
 
 /////////////////////////////////////////////////////////////////////
-//creates three 784 X 784 matrices and on 10 X 784
-//and initializes them all to random values between [.3, .7]
-//(this value may be fun to play with in the future)
+//Randomizes the weigths for the matrices. 
+// -originally three matrices of 784 x 784 and output of 10 x 784
+//	updated design for input layer of 784 input nodes, then a 500
+//	neuron layer, then a 1000 neuron layer, then a 50 neuron layer
+//	then output layer of 10 that then gets softmax analysis done
+//	
+// - still initializes all to random values between [-.5, .5]
+//	 (this value may be fun to play with in the future)
 /////////////////////////////////////////////////////////////////////
-int file_io::randomizeWeights(Eigen::MatrixXd* w1,
-							  Eigen::MatrixXd* w2,
-							  Eigen::MatrixXd* w3,
-							  Eigen::MatrixXd* o4){
+int file_io::randomizeWeights(Eigen::MatrixXd** w1,
+							  Eigen::MatrixXd** w2,
+							  Eigen::MatrixXd** w3,
+							  Eigen::MatrixXd** o4){
 
-	Eigen::MatrixXd a(500, 784);
-	Eigen::MatrixXd b(1000, 500);
-	Eigen::MatrixXd c(5000, 1000);
-	Eigen::MatrixXd d(50, 5000);
-	Eigen::MatrixXd o(10, 50);
+	*w1 = new Eigen::MatrixXd;
+	*w2 = new Eigen::MatrixXd;
+	*w3 = new Eigen::MatrixXd;
+	*o4 = new Eigen::MatrixXd;
 
+	(*w1)->resize(500, 784);
+	(*w2)->resize(1000, 500);
+	(*w3)->resize(50, 1000);
+	(*o4)->resize(10, 50);
+	
 	//randomizing values between -.5 and .5
-	for(int i = 0; i < a.rows(); i++){
-		for(int j = 0; j < a.cols(); j++){
-			a(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+	for(int i = 0; i < (*w1)->rows(); i++){
+		for(int j = 0; j < (*w1)->cols(); j++){
+			(**w1)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
 		}
 	}
-	for(int i = 0; i < b.rows(); i++){
-		for(int j = 0; j < b.cols(); j++){
-			b(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+	for(int i = 0; i < (*w2)->rows(); i++){
+		for(int j = 0; j < (*w2)->cols(); j++){
+			(**w2)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
 		}
 	}
-	for(int i = 0; i < c.rows(); i++){
-		for(int j = 0; j < c.cols(); j++){
-			c(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
-		}
-	}
-	for(int i = 0; i < d.rows(); i++){
-		for(int j = 0; j < d.cols(); j++){
-			d(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+	for(int i = 0; i < (*w3)->rows(); i++){
+		for(int j = 0; j < (*w3)->cols(); j++){
+			(**w3)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
 		}
 	}
 
-	for(int i = 0; i < o.rows(); i++){
-		for(int j = 0; j < o.cols(); j++){
-			o(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+	for(int i = 0; i < (*o4)->rows(); i++){
+		for(int j = 0; j < (*o4)->cols(); j++){
+			(**o4)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
 		}
 	}
-
-	//setting the passed pointers to the new matrices we just randomized	
-	w1 = &a;
-	w2 = &b;
-	w3 = &c;
-	o4 = &o;
 
 	return(0);
 }
@@ -111,7 +108,7 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 	weights.open(f_name);
 	
 	//inputting header description
-	weights << "Matrix Weigths\n";
+	weights << "Matrix Weights\n";
 	
 	//first matrix input
 	weights << "Hidden Layer 1\nsize: ";
@@ -123,7 +120,7 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 	//loops through array
 	for(int n = 0; n < w1->rows(); n++){
 		for(int m = 0; m < w1->cols(); m++){
-			weights << (*w1)(n,m) << " ";
+			weights << (*w1)(n,m) << "|";
 		}
 		
 		//adds line break at end of row
@@ -140,7 +137,7 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 	//loops through array
 	for(int n = 0; n < w2->rows(); n++){
 		for(int m = 0; m < w2->cols(); m++){
-			weights << (*w2)(n,m) << " ";
+			weights << (*w2)(n,m) << "|";
 		}
 		
 		//adds line break at end of row
@@ -157,7 +154,7 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 	//loops through array
 	for(int n = 0; n < w3->rows(); n++){
 		for(int m = 0; m < w3->cols(); m++){
-			weights << (*w3)(n,m) << " ";
+			weights << (*w3)(n,m) << "|";
 		}
 		
 		//adds line break at end of row
@@ -174,7 +171,7 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 	//loops through array
 	for(int n = 0; n < o4->rows(); n++){
 		for(int m = 0; m < o4->cols(); m++){
-			weights << (*o4)(n,m) << " ";
+			weights << (*o4)(n,m) << "|";
 		}
 		
 		//adds line break at end of row
@@ -189,15 +186,66 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 int file_io::readWeights(Eigen::MatrixXd* w1,
 						 Eigen::MatrixXd* w2,
 						 Eigen::MatrixXd* w3,
-						 Eigen::MatrixXd* o4,
+						 Eigen::MatrixXd* w4,
 						 std::string f_name){
-	//SOME CODE BRO
+	//today
+
 	return(0);
 }
 
 /////////////////////////////////////////////////////////////////////
 //basic test to see if a file exists or not
 /////////////////////////////////////////////////////////////////////
-bool file_io::file_exists(std::string& f_name){
+bool file_io::file_exists(std::string f_name){
 	return(access(f_name.c_str(), F_OK) != -1);
+}
+
+/////////////////////////////////////////////////////////////////////
+//unit test time muddafuddas
+//
+// -unit test validates users defined file name and prints success
+//	of that operation
+// -randomizes weights and prints them out to correct file in the 
+//	correct format
+// -then reads randomized weights back into the unit test and
+//	prints success of that operaion
+// -operation accepts a string arguemnt from command line and returns
+//	standard 0,1
+/////////////////////////////////////////////////////////////////////
+int file_io::run_unit(std::string path){
+
+	Eigen::MatrixXd* w1=NULL;
+	Eigen::MatrixXd* w2=NULL;
+	Eigen::MatrixXd* w3=NULL;
+	Eigen::MatrixXd* w4=NULL;
+	
+	std::cout << "\n================================";
+	std::cout << "\n===In file_io class unit test===\n";
+	std::cout << "================================\n";
+	
+	if(this->validateFileName(path)){
+		std::cout << "FAIL: in validate File Name method\n";
+		return(1);
+	}
+
+	std::cout << "SUCCESS: found ["<<path<<"] a valid file name\n";
+	std::cout << "VALUE:   method file_exists("<<path<<") evaluates to ["<<this->file_exists(path)<<"]\n";
+
+	if(this->randomizeWeights(&w1, &w2, &w3, &w4)){
+		std::cout << "FAIL: in randomize weigths method\n";
+		return(1);
+	}
+	
+	std::cout << "SUCCESS: randomized pointers ["<<(std::hex)<<w1<<","
+								 				 <<(std::hex)<<w2<<","
+								 			 	 <<(std::hex)<<w3<<","
+											 	 <<(std::hex)<<w4<<"]\n";
+	if(this->writeWeights(w1, w2, w3, w4, path)){
+		std::cout << "FAIL: in write weights method\n";
+		return(1);
+	}
+	std::cout << "SUCCESS: wrote matrix values to ["<<path<<"]\n";
+	
+	std::cout << "\n\nRead method still in development\n";
+	return(0);
 }

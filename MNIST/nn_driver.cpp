@@ -78,16 +78,28 @@ int main(int argc, char **argv){
 		
 		//runs unit test on a block to check correct matrix creation
 		if((std::string)argv[2] == "r" && argc == 3){
-			mnist_block* testBlock = new mnist_block(0);
-			mnist_block* trainBlock = new mnist_block(1);
-			testBlock->run_unit();
-			trainBlock->run_unit();
+			if(argc == 3){
+				mnist_block* testBlock = new mnist_block(0);
+				mnist_block* trainBlock = new mnist_block(1);
+				testBlock->run_unit();
+				trainBlock->run_unit();
+				return(0);
+			}else{
+				std::cout << "ERROR: invalid command line argments (use [-h] for help)\n\n";
+				return(1);
+			}
+		}
+		
+		//runs unit test on io_block class
+		if((std::string)argv[2] == "o" && argc == 4){
+			file_io* unit = new file_io();
+			unit->run_unit((std::string)argv[3]);
 			return(0);
-		}else if((std::string)argv[2] == "r" && argc != 3){
-			std::cout << "ERROR: invalid command line argments (use [-h] for help)" << std::endl << std::endl;
+		}else{	
+			std::cout << "ERROR: invalid command line argments (use [-h] for help)\n"
+					  << "[You may be missing a file name]\n";
 			return(1);
 		}
-			
 		return(0);
 	}
 

@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Sat May 27 2017
+*	Last Edited	: Mon May 29 2017
 *
 ****************************************************************/
 
@@ -218,11 +218,10 @@ int mnist_block::run_unit(void){
 	Eigen::MatrixXd* image = getImgI();
 	Eigen::VectorXi* label = getLblI();
 	
-	int stella = 10;//std::rand() % image->cols();
-
-	std::cout << "image values: " << image << std::endl;
-	//std::cout << "break stuff? " << *image << std::endl;
-	std::cout << "In mnist_block class unit test\n\n";
+	int stella = std::rand() % image->cols();
+	std::cout << "\n====================================";
+	std::cout << "\n===In mnist_block class unit test===\n";
+	std::cout << "====================================\n";
 	std::cout << "Number of image vectors: " << image->cols() << std::endl;
 	std::cout << "Size of image vectors: " << image->rows() << std::endl;
 	std::cout << "Number of labels: " << label->size() << std::endl;
