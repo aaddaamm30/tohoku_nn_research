@@ -190,3 +190,25 @@ but I got that figured out. Pointers to pointers
 are a thing of beauty. Japanese test wednesday. 
 god rest my soul. 
 
+===================
+5/302017
+Tuesday and while my mind is mostly concerned
+with the test tomorrow, I think I should set
+a finish by today deadline of the weight reader
+that reads in data from a txt file. Once I have
+that method the rest of the project can proceed
+as planned. The work involved with the network
+can start and I hope to have that going at least 
+by this Friday, maybe not necessarially any of
+the core math but setting up the matrices and 
+vectors to be passed will be crucial. I may need
+to add an "average" vector to the intermediate
+holder vectors so that I can successfully run
+backpropogation. We will cross that bridge when
+we arrive at it though. For today, I will finish
+the reader. may be a bit slow but by doing it
+char by char I can have the most accurate data.
+If not char by char I will update this log to 
+reflect that.
+
+
