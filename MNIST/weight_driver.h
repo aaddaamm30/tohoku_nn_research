@@ -10,7 +10,7 @@
 *				  file doesn't exist.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon May 29 2017
+*	Last Edited	: Tue May 30 2017
 *
 ****************************************************************/
 #ifndef _WEIGHT_FILE_READER_WRITER_
@@ -20,6 +20,7 @@
 #include <Eigen/Dense>
 #include <string>
 
+/////////////////////////////////////////////////////////////////////
 //weight_io class makes very defined weight matrices, three of
 //size (784 X 784) and one of size (784 X 10) for the output layer.
 //class will be in charge of returning pointers to these matricies
@@ -29,6 +30,7 @@
 //this class also handles errors when it comes to validating file
 //names and identifiying if there is a file avaliable or not to 
 //read from.
+/////////////////////////////////////////////////////////////////////
 
 class file_io{
 
@@ -44,10 +46,10 @@ class file_io{
 							 Eigen::MatrixXd**,
 							 Eigen::MatrixXd**,
 							 Eigen::MatrixXd**);
-		int readWeights(Eigen::MatrixXd*,
-						Eigen::MatrixXd*,
-						Eigen::MatrixXd*,
-						Eigen::MatrixXd*, 
+		int readWeights(Eigen::MatrixXd**,
+						Eigen::MatrixXd**,
+						Eigen::MatrixXd**,
+						Eigen::MatrixXd**, 
 						std::string);
 		int writeWeights(Eigen::MatrixXd*,
 						 Eigen::MatrixXd*,

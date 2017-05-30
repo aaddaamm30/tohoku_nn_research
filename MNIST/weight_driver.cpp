@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon May 29 2017
+*	Last Edited	: Tue May 30 2017
 *
 ****************************************************************/
 
@@ -17,6 +17,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <iomanip>
+#include <boost/lexical_cast.hpp>
+#include <stdlib.h>
 #include "weight_driver.h"
 
 /////////////////////////////////////////////////////////////////////
@@ -183,12 +185,206 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 	return(0);
 }
 
-int file_io::readWeights(Eigen::MatrixXd* w1,
-						 Eigen::MatrixXd* w2,
-						 Eigen::MatrixXd* w3,
-						 Eigen::MatrixXd* w4,
+/////////////////////////////////////////////////////////////////////
+//Reads matrices in from txt doc. 
+// - Evaluates char by char for weight values then casts to double
+// - Creates the matrixes and assigns them to the passed pointer
+// - Uses same double pointer implementation that the randomize
+//	 method uses
+//
+//	code admitedly bad. doing it char at a time clumsy and ugly
+/////////////////////////////////////////////////////////////////////
+int file_io::readWeights(Eigen::MatrixXd** w1,
+						 Eigen::MatrixXd** w2,
+						 Eigen::MatrixXd** w3,
+						 Eigen::MatrixXd** w4,
 						 std::string f_name){
-	//today
+	//create new matrixes
+	*w1 = new Eigen::MatrixXd;
+	*w2 = new Eigen::MatrixXd;
+	*w3 = new Eigen::MatrixXd;
+	*w4 = new Eigen::MatrixXd;
+
+	char tmp[20];
+	char c;
+	int i, row, col;
+	//open file for reading
+	std::ifstream weights;
+	weights.open(f_name);
+	if(weights.is_open()){
+		
+		//algorithm for parsing though matrix file header and 
+		//extracting row and col	
+		do{
+			weights.get(c);
+		}while(c != ':');
+		weights.get(c);weights.get(c);
+		i=0;
+		
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != ' ');
+		
+		tmp[i] = '\0';
+		row = boost::lexical_cast<int>(tmp);
+		i=0;
+		weights.get(c);weights.get(c);weights.get(c);	//c='X'->' '->'[num]' respectively
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != '\n');
+		tmp[i] = '\0';
+		col = boost::lexical_cast<int>(tmp);
+		weights.get(c);	//reader is at first char of first num
+
+		//resize weights 1 and read in data, ends loop at end of first matrix
+		(*w1)->resize(row, col);
+		for(int n = 0; n < (*w1)->rows(); n++){
+			for(int m = 0; m < (*w1)->cols(); m++){
+				//precondition that reader is at first char of first num
+				i=0;
+				do{
+					tmp[i] = c;
+					weights.get(c);
+					i++;
+				}while(c != '|');
+				tmp[i]='\0';
+				weights.get(c);
+				(**w1)(n,m) = strtod(tmp, NULL);	
+			}
+			weights.get(c);	//moves reader past '\n' char
+		}
+		
+		//repeate above algorithm on second weights
+		do{
+			weights.get(c);
+		}while(c != ':');
+		weights.get(c);weights.get(c);
+		i=0;
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != ' ');
+		tmp[i] = '\0';
+		row = boost::lexical_cast<int>(tmp);
+		i=0;
+		weights.get(c);weights.get(c);weights.get(c);	//c='X'->' '->'[num]' respectively
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != '\n');
+		tmp[i] = '\0';
+		col = boost::lexical_cast<int>(tmp);
+		weights.get(c);	//reader is at first char of first num
+
+		//resize weights 1 and read in data, ends loop at end of first matrix
+		(*w2)->resize(row, col);
+		for(int n = 0; n < (*w2)->rows(); n++){
+			for(int m = 0; m < (*w2)->cols(); m++){
+				//precondition that reader is at first char of first num
+				i=0;
+				do{
+					tmp[i] = c;
+					weights.get(c);
+					i++;
+				}while(c != '|');
+				tmp[i]='\0';
+				weights.get(c);
+				(**w2)(n,m) = strtod(tmp, NULL);	
+			}
+			weights.get(c);	//moves reader past '\n' char
+		}
+
+		//read in data from 3rd matrix
+		do{
+			weights.get(c);
+		}while(c != ':');
+		weights.get(c);weights.get(c);
+		i=0;
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != ' ');
+		tmp[i] = '\0';
+		row = boost::lexical_cast<int>(tmp);
+		i=0;
+		weights.get(c);weights.get(c);weights.get(c);	//c='X'->' '->'[num]' respectively
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != '\n');
+		tmp[i] = '\0';
+		col = boost::lexical_cast<int>(tmp);
+		weights.get(c);	//reader is at first char of first num
+
+		//resize weights 1 and read in data, ends loop at end of first matrix
+		(*w3)->resize(row, col);
+		for(int n = 0; n < (*w3)->rows(); n++){
+			for(int m = 0; m < (*w3)->cols(); m++){
+				//precondition that reader is at first char of first num
+				i=0;
+				do{
+					tmp[i] = c;
+					weights.get(c);
+					i++;
+				}while(c != '|');
+				tmp[i]='\0';
+				weights.get(c);
+				(**w3)(n,m) = strtod(tmp, NULL);	
+			}
+			weights.get(c);	//moves reader past '\n' char
+		}
+		
+		//read in data from last matrix and then close file
+		do{
+			weights.get(c);
+		}while(c != ':');
+		weights.get(c);weights.get(c);
+		i=0;
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != ' ');
+		tmp[i] = '\0';
+		row = boost::lexical_cast<int>(tmp);
+		i=0;
+		weights.get(c);weights.get(c);weights.get(c);	//c='X'->' '->'[num]' respectively
+		do{
+			tmp[i] = c;
+			weights.get(c);
+			i++;
+		}while(c != '\n');
+		tmp[i] = '\0';
+		col = boost::lexical_cast<int>(tmp);
+		weights.get(c);	//reader is at first char of first num
+
+		//resize weights 1 and read in data, ends loop at end of first matrix
+		(*w4)->resize(row, col);
+		for(int n = 0; n < (*w4)->rows(); n++){
+			for(int m = 0; m < (*w4)->cols(); m++){
+				//precondition that reader is at first char of first num
+				i=0;
+				do{
+					tmp[i] = c;
+					weights.get(c);
+					i++;
+				}while(c != '|');
+				tmp[i]='\0';
+				weights.get(c);
+				(**w4)(n,m) = strtod(tmp, NULL);	
+			}
+			weights.get(c);	//moves reader past '\n' char
+		}
+		weights.close();
+	}
 
 	return(0);
 }
@@ -214,11 +410,21 @@ bool file_io::file_exists(std::string f_name){
 /////////////////////////////////////////////////////////////////////
 int file_io::run_unit(std::string path){
 
+	//weights to be randomized and written
 	Eigen::MatrixXd* w1=NULL;
 	Eigen::MatrixXd* w2=NULL;
 	Eigen::MatrixXd* w3=NULL;
 	Eigen::MatrixXd* w4=NULL;
 	
+	//weights to be read back in
+	Eigen::MatrixXd* iw1=NULL;
+	Eigen::MatrixXd* iw2=NULL;
+	Eigen::MatrixXd* iw3=NULL;
+	Eigen::MatrixXd* iw4=NULL;
+	
+	//resize 0 matrix
+	Eigen::MatrixXd tst;
+		
 	std::cout << "\n================================";
 	std::cout << "\n===In file_io class unit test===\n";
 	std::cout << "================================\n";
@@ -245,7 +451,20 @@ int file_io::run_unit(std::string path){
 		return(1);
 	}
 	std::cout << "SUCCESS: wrote matrix values to ["<<path<<"]\n";
+
+	if(this->readWeights(&iw1, &iw2, &iw3, &iw4, path)){
+		std::cout << "FAIL: in read weights method\n";
+		return(1);
+	}	
+	std::cout << "SUCCESS: passed through read method\n"
+			  << "printing read values to io_unit.txt\n";
+			
+	if(this->writeWeights(iw1, iw2, iw3, iw4, "io_unit.txt")){
+		std::cout << "FAIL: in read weights method\n";
+		return(1);
+	}
 	
-	std::cout << "\n\nRead method still in development\n";
+	std::cout <<"==========================="
+			  <<"\nCOMPLETED IO FILE UNIT TEST\n";	
 	return(0);
 }
