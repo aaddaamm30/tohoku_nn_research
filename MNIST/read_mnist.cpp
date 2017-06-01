@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Mon May 29 2017
+*	Last Edited	: Thu June 1 2017
 *
 ****************************************************************/
 
@@ -35,21 +35,21 @@ mnist_block::mnist_block(int i){
 	std::string pLblData = "";
 
 	if(i == 1){
-		if(this->setPaths("../train_data/train-images-idx3-ubyte",
+		if(_setPaths("../train_data/train-images-idx3-ubyte",
 						 "../train_data/train-labels-idx1-ubyte"))
 			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
-		if(this->set_UnitTest("train_data_unit.txt"))
+		if(_set_UnitTest("train_data_unit.txt"))
 			std::cout << "ERROR: setting unit.txt failure" << std::endl;
 	}else if(i == 0){
-		if(this->setPaths("../test_data/t10k-images-idx3-ubyte",
+		if(_setPaths("../test_data/t10k-images-idx3-ubyte",
 						 "../test_data/t10k-labels-idx1-ubyte"))
 			std::cout << "ERROR: at setPaths in mnist_block constructor" << std::endl;
-		if(this->set_UnitTest("test_data_unit.txt"))
+		if(_set_UnitTest("test_data_unit.txt"))
 			std::cout << "ERROR: setting unit.txt failure" << std::endl;
 	}
 
 	//function to decode and read data into matrix and label
-	if(this->readData()){
+	if(_readData()){
 		std::cout << "ERROR: readData fx failure " << std::endl;
 	}
 
@@ -59,28 +59,28 @@ mnist_block::mnist_block(int i){
 //public getter methods that returns a single case of a an image vector
 ///////////////////////////////////////////////////////////////////////////
 Eigen::MatrixXd* mnist_block::getImgI(void){
-	return(this->img);
+	return(_img);
 }
 
 Eigen::VectorXi* mnist_block::getLblI(void){
-	return(this->lbl);
+	return(_lbl);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //function that reads any amount of data into
 //appropreate vector<Eigen::MatrixXd> size
 ///////////////////////////////////////////////////////////////////////////
-int mnist_block::readData(void){
+int mnist_block::_readData(void){
 	
 	//variables to hold onto size
 	//set and fill the matrix vector array function
-	if(this->loadUpImgs()){
+	if(_loadUpImgs()){
 		std::cout << "ERROR: loudUpImg fx failure " << std::endl;
 		return(1);
 	}
 	
 	//set and fill the label vector
-	if(this->loadUpLbls()){
+	if(_loadUpLbls()){
 		std::cout << "ERROR: loadUpLbls fx failure" << std::endl;
 		return(1);
 	}
@@ -95,10 +95,10 @@ int mnist_block::readData(void){
 //and then fills the mnist_block class img matrix vectors with
 //correct data
 ///////////////////////////////////////////////////////////////////////////
-int mnist_block::loadUpImgs(void){
+int mnist_block::_loadUpImgs(void){
 		
 	//declare varbs
-	std::string path = this->getImgPath();
+	std::string path = _getImgPath();
 	int magic_number = 0;
 	int n_images = 0;
 	int n_rows = 0;
@@ -133,7 +133,7 @@ int mnist_block::loadUpImgs(void){
 			}
 		}
 		
-		if(this->setImgVec(m)){
+		if(_setImgVec(m)){
 			std::cout<<"ERROR: setting class image datablock"<<std::endl;
 			return(1);
 		}
@@ -149,10 +149,10 @@ int mnist_block::loadUpImgs(void){
 //with the appropreate label values at corrosponding indexes
 //of the imgage vector
 ///////////////////////////////////////////////////////////////////////////
-int mnist_block::loadUpLbls(void){
+int mnist_block::_loadUpLbls(void){
 
 	//variable declarations
-	std::string path = this->getLblPath();	
+	std::string path = _getLblPath();	
 	int magic_number = 0;
 	int n_labels = 0;
 
@@ -177,7 +177,7 @@ int mnist_block::loadUpLbls(void){
 		}
 
 		//std::cout << v << std::endl;
-		if(this->setLblVec(v)){
+		if(_setLblVec(v)){
 			std::cout<<"ERROR: setting class label vector"<<std::endl;
 			return(1);
 		}
@@ -228,7 +228,7 @@ int mnist_block::run_unit(void){
 	
 	//print randomized vector and label to txt file
 	std::ofstream unitfile;
-	unitfile.open(this->getFilePath());
+	unitfile.open(_getFilePath());
 	unitfile << "This is unit test output.\n\n"
 			 << "Below is 28 X 28 matrix that represents the number " 
 			 << (*label)(stella) << std::endl << std::endl;
@@ -241,7 +241,7 @@ int mnist_block::run_unit(void){
 	}
 	
 	std::cout << "Printed vector and label of data " 
-			  << stella << " to " << this->getFilePath() << std::endl;
+			  << stella << " to " << _getFilePath() << std::endl;
 
 	return(0);	//be successfull my yung padawan
 }
@@ -249,20 +249,20 @@ int mnist_block::run_unit(void){
 ///////////////////////////////////////////////////////////////////////////
 //setter declaration
 ///////////////////////////////////////////////////////////////////////////
-int mnist_block::setPaths(std::string pics, std::string labels){
-	this->pImgData = pics;
-	this->pLblData = labels;
+int mnist_block::_setPaths(std::string pics, std::string labels){
+	_pImgData = pics;
+	_pLblData = labels;
 	return(0);
 }
-int mnist_block::setImgVec(Eigen::MatrixXd* in){
-	this->img = in;
+int mnist_block::_setImgVec(Eigen::MatrixXd* in){
+	_img = in;
 	return(0);
 }
-int mnist_block::setLblVec(Eigen::VectorXi* in){
-	this->lbl = in;
+int mnist_block::_setLblVec(Eigen::VectorXi* in){
+	_lbl = in;
 	return(0);
 }
-int mnist_block::set_UnitTest(std::string fileName){
-	this->unit_file_name = fileName;
+int mnist_block::_set_UnitTest(std::string fileName){
+	_unit_file_name = fileName;
 	return(0);
 }

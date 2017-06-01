@@ -12,7 +12,7 @@
 *				  (int) for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Fri May 26 2017
+*	Last Edited	: Thu June 1 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_
@@ -31,15 +31,7 @@ public:
 	//getters
 	Eigen::MatrixXd* getImgI(void);
 	Eigen::VectorXi* getLblI(void);
-	std::string getImgPath(void){
-		return(this->pImgData);
-	}
-	std::string getLblPath(void){
-		return(this->pLblData);
-	}
-	std::string getFilePath(void){
-		return(this->unit_file_name);
-	}
+	
 
 	//unit test that outputs valuable information to the console
 	//and also creates a txt file with vector information for one
@@ -48,22 +40,32 @@ public:
 
 private:
 
+	std::string _getImgPath(void){
+		return(_pImgData);
+	}
+	std::string _getLblPath(void){
+		return(_pLblData);
+	}
+	std::string _getFilePath(void){
+		return(_unit_file_name);
+	}
+	
 	//functions used just by constructor
-	int readData(void);
-	int loadUpImgs(void);
-	int loadUpLbls(void);
-	int setImgVec(Eigen::MatrixXd*);
-	int setLblVec(Eigen::VectorXi*);
-	int setPaths(std::string, std::string);
-	int set_UnitTest(std::string);
+	int _readData(void);
+	int _loadUpImgs(void);
+	int _loadUpLbls(void);
+	int _setImgVec(Eigen::MatrixXd*);
+	int _setLblVec(Eigen::VectorXi*);
+	int _setPaths(std::string, std::string);
+	int _set_UnitTest(std::string);
 	
 	//parallel vectors of images and labels
-	Eigen::MatrixXd *img;
-	Eigen::VectorXi *lbl;
+	Eigen::MatrixXd *_img;
+	Eigen::VectorXi *_lbl;
 
-	std::string pImgData = "";
-	std::string pLblData = "";
-	std::string unit_file_name = "";
+	std::string _pImgData = "";
+	std::string _pLblData = "";
+	std::string _unit_file_name = "";
 };
 
 #endif

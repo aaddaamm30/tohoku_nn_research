@@ -211,4 +211,24 @@ char by char I can have the most accurate data.
 If not char by char I will update this log to 
 reflect that.
 
-
+===================
+6/1/2017
+So failed the test. That was fun. Moving on to 
+what I enjoy more though I will be making setters
+and getters for the nn_engine class and some of
+the core forward pass math work along with the
+various ReLU and derivitave ReLU functions.
+Hopefully Ill be able to make a unit test for 
+a forward pass operation. Also need to make 
+softmax classifier for 10 unit output vector.
+I'm not expecting any of these operations to 
+be all that difficult but I need to figure out
+how I want inheritance to work into the equation.
+Eventually I would like to see the main call be
+brain.setBatchSize(x);
+brain.numberEpoch(x);
+brain.runTrain();
+brain.evaluate();
+where runTrain will print out progress and ouput
+a weight .txt doc at the end and then evaluate
+will return an accuracy percent. 

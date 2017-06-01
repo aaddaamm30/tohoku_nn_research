@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu May 25 2017
+*	Last Edited	: Thu June 1 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -31,44 +31,66 @@ class neural_backbone{
 
 	public:
 		
+		//constructor
+		neural_backbone(void);
+
 	protected:
 			
-		int setMatrixWeights(Eigen::MatrixXd*,
-							 Eigen::MatrixXd*, 
-							 Eigen::MatrixXd*);
-		int randomizeMatrixWeights(void);
+		//setMatrixWeights used by higer level class
+		//to initialize weights to either random or 
+		//read in from the file_io class
+		int p_setMatrixWeights(Eigen::MatrixXd**,
+							 Eigen::MatrixXd**, 
+							 Eigen::MatrixXd**,
+							 Eigen::MatrixXd**);
+		int p_setInputVector(Eigen::VectorXi**);
+		int p_setStepSize(int i){return(this->m_step_size = i);}
 		
+		//pass functions for lots of control
+		int p_l1Pass(void);
+		int p_l2Pass(void);
+		int p_l3Pass(void);
+		int p_l4Pass(void);
+		int p_softmax(void);
+	
+		//getters for all vectors and weights that returns
+		//all eigenvectors in an array with the structure
+		//listed below
+		Eigen::VectorXd** p_getFPV(void);
 		
-		
+		int p_costFunk(void);
+
+
 	//private attributes of abstract class neural_backbone
 	private:
-		
+	
+		//important components of network
+		int m_step_size;
+	
 		//give access to mnist data blocks
-		mnist_block *training_block = new mnist_block(1);
-		mnist_block *testing_block = new mnist_block(0);
-
-		//values for network to use for stuff?
-		double step_size = 0;
-		double batch_size = 0;
+		mnist_block* m_training_block = new mnist_block(1);
+		mnist_block* m_testing_block = new mnist_block(0);
 		
 		//matrix to represent weights
-		Eigen::MatrixXd* w1 = NULL;
-		Eigen::MatrixXd* w2 = NULL;
-		Eigen::MatrixXd* w3 = NULL;
-		Eigen::MatrixXd* o_w4 = NULL;
+		Eigen::MatrixXd* m_w1 = NULL;
+		Eigen::MatrixXd* m_w2 = NULL;
+		Eigen::MatrixXd* m_w3 = NULL;
+		Eigen::MatrixXd* m_o_w4 = NULL;
 
+		//overall input and output vectors
+		Eigen::VectorXi* m_inputVec = new Eigen::VectorXi;
+		Eigen::VectorXd* m_outVec = new Eigen::VectorXd;	
+		Eigen::VectorXd* m_lblVec = new Eigen::VectorXd;
 		//USED ONLY FOR TRAINING
 		//forward pass vectors with and without sigmoid applied
-		Eigen::VectorXd* v1_w = NULL;		//1 before sigmoid
-		Eigen::VectorXd* v1_a = NULL;		//1 after sigmoid
-		Eigen::VectorXd* v2_w = NULL;		//2 before sigmoid
-		Eigen::VectorXd* v2_a = NULL;		//2 after sigamoid
-		Eigen::VectorXd* v3_w = NULL;		//3 before sigmoid
-		Eigen::VectorXd* v3_a = NULL;		//3 after sigmoid
-		Eigen::VectorXd* o_v4_w = NULL;		//raw output layer
-		Eigen::VectorXd* o_v4_smax = NULL;	//sofmax output
-		
-	
+		Eigen::VectorXd* m_v1_w = new Eigen::VectorXd;		//1 before sigmoid
+		Eigen::VectorXd* m_v1_a = new Eigen::VectorXd;		//1 after sigmoid
+		Eigen::VectorXd* m_v2_w = new Eigen::VectorXd;		//2 before sigmoid
+		Eigen::VectorXd* m_v2_a = new Eigen::VectorXd;		//2 after sigamoid
+		Eigen::VectorXd* m_v3_w = new Eigen::VectorXd;		//3 before sigmoid
+		Eigen::VectorXd* m_v3_a = new Eigen::VectorXd;		//3 after sigmoid
+		Eigen::VectorXd* m_o_v4_w = new Eigen::VectorXd;	//raw output layer
+
 };
 
 #endif
