@@ -41,8 +41,16 @@ neural_backbone::neural_backbone(){
 	m_v3_w->resize(50);
 	m_v3_a->resize(50);
 	m_o_v4_w->resize(10);
+	m_o_v4_w->resize(10);
 	m_outVec->resize(10);
 	m_lblVec->resize(10);
+	m_delta_500->resize(500);
+	m_delta_1000->resize(1000);
+	m_delta_50->resize(50);
+	m_delta_10->resize(10);
+	m_gradient_w1->resize(500,784);
+	m_gradient_w2->resize(1000,500) ///////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////// HEREHERHERHEHREHRHER
 }
 
 ////////////////////////////////////////////////////////
@@ -89,11 +97,12 @@ int neural_backbone::p_l2Pass(void){
 }
 int neural_backbone::p_l3Pass(void){
 	(*m_v3_w) = (*m_w3) * (*m_v2_a);
-	(*m_v3_a) = ReLU(*m_v2_w);
+	(*m_v3_a) = ReLU(*m_v3_w);
 	return(0);
 }
 int neural_backbone::p_l4Pass(void){
 	(*m_o_v4_w) = (*m_w3) * (*m_v2_a);
+	(*m_o_v4_a) = ReLU(*m_o_v4_w);
 	return(0);
 }
 
@@ -104,8 +113,8 @@ int neural_backbone::p_l4Pass(void){
 //////////////////////////////////////////////////////////
 int neural_backbone::p_softmax(void){
 
-	int size = m_o_v4_w->sum();
-	(*m_outVec) = (*m_o_v4_w) / size;
+	int size = m_o_v4_a->sum();
+	(*m_outVec) = (*m_o_v4_a) / size;
 	return(0);
 }
 
@@ -128,6 +137,52 @@ Eigen::VectorXd** neural_backbone::p_getFPV(void){
 	FPV[6] = m_o_v4_w;
 
 	return(FPV);
+}
+
+//////////////////////////////////////////////////////////
+//Backpropagation initialize
+//	- function runs through all layers backwords
+//	  calculating the error.
+//	- sets value to the m_delta_* vectors 
+//	- accepts argument of label
+//////////////////////////////////////////////////////////
+int neural_backbone::p_bp_initial(int lbl){
+
+	//tmp vectors
+	Eigen::VectorXd gradient;
+	Eigen::VectorXd insigmoid;
+
+	//reset lblvector to unit vector
+	for(int i = 0; i < m_lblVec->rows(); i++)
+		m_lblVec(i) = 0;
+	m_lblVec(lbl) = 1;
+	
+	gradient.resize(10);
+	insigmoid.resize(10);
+	gradient = (*m_outVec) - m_lblVec;
+	insigmoid = ReLU_prime(*m_o_v4_w);
+	*m_delta_10 = gradient.cwizeProduct(insigmoid);
+
+	gradient.resize(50);
+	insigmoid.resize(50);
+	gradient = ((*m_o_w4).transpose() * (*m_delta_50).matrix()).vector();
+	insigmoid = ReLU_prime(*m_v3_w);
+	*m_delta_50 = gradient.cwizeProduct(insigmoid);
+
+	gradient.resize(1000);
+	insigmoid.resize(1000);
+	gradient = ((*m_w3).transpose() * (*m_delta_1000).matrix()).vector();
+	insigmoid = ReLU_prime(*m_v2_w);
+	*m_delta_1000 = gradient.cwizeProduct(insigmoid);
+
+	gradient.resize(500);
+	insigmoid.resize(500);
+	gradient = ((*m_w3).transpose() * (*m_delta_500).matrix()).vector();
+	insigmoid = ReLU_prime(*m_v1_w);
+	*m_delta_500 = gradient.cwizeProduct(insigmoid);
+
+
+	
 }
 
 //////////////////////////////////////////////////////////

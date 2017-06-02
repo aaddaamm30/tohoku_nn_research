@@ -59,8 +59,11 @@ class neural_backbone{
 		Eigen::VectorXd** p_getFPV(void);
 		
 		//backprop operations layer by layer
-		int 
-		int p_costFunk(void);
+		int p_bp_initial(int);
+		int p_bp_update(int);
+		
+		//weight updater
+		int p_updateWeigths(void);
 
 		
 	//private attributes of abstract class neural_backbone
@@ -84,7 +87,6 @@ class neural_backbone{
 		Eigen::VectorXd* m_outVec = new Eigen::VectorXd;	
 		Eigen::VectorXd* m_lblVec = new Eigen::VectorXd;
 	
-		//USED ONLY FOR TRAINING
 		//forward pass vectors with and without sigmoid applied
 		Eigen::VectorXd* m_v1_w = new Eigen::VectorXd;		//1 before sigmoid
 		Eigen::VectorXd* m_v1_a = new Eigen::VectorXd;		//1 after sigmoid
@@ -93,7 +95,17 @@ class neural_backbone{
 		Eigen::VectorXd* m_v3_w = new Eigen::VectorXd;		//3 before sigmoid
 		Eigen::VectorXd* m_v3_a = new Eigen::VectorXd;		//3 after sigmoid
 		Eigen::VectorXd* m_o_v4_w = new Eigen::VectorXd;	//raw output layer
+		Eigen::VectorXd* m_o_v4_a = new Eigen::VectorXd;	//raw output with simoid :(
 
+		//delta error for each layer
+		Eigen::VectorXd* m_delta_500 = new Eigen::VectorXd;
+		Eigen::MatrixXd* m_gradient_w1 = new Eigen::MatrixXd;
+		Eigen::VectorXd* m_delta_1000 = new Eigen::VectorXd;
+		Eigen::MatrixXd* m_gradient_w2 = new Eigen::MatrixXd;
+		Eigen::VectorXd* m_delta_50 = new Eigen::VectorXd;
+		Eigen::MatrixXd* m_gradient_w3 = new Eigen::MatrixXd;
+		Eigen::VectorXd* m_delta_10 = new Eigen::VectorXd;
+		Eigen::MatrixXd* m_gradient_w4 = new Eigen::MatrixXd;
 };
 
 #endif
