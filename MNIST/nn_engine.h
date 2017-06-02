@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu June 1 2017
+*	Last Edited	: Fri June 2 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -58,9 +58,11 @@ class neural_backbone{
 		//listed below
 		Eigen::VectorXd** p_getFPV(void);
 		
+		//backprop operations layer by layer
+		int 
 		int p_costFunk(void);
 
-
+		
 	//private attributes of abstract class neural_backbone
 	private:
 	
@@ -81,6 +83,7 @@ class neural_backbone{
 		Eigen::VectorXi* m_inputVec = new Eigen::VectorXi;
 		Eigen::VectorXd* m_outVec = new Eigen::VectorXd;	
 		Eigen::VectorXd* m_lblVec = new Eigen::VectorXd;
+	
 		//USED ONLY FOR TRAINING
 		//forward pass vectors with and without sigmoid applied
 		Eigen::VectorXd* m_v1_w = new Eigen::VectorXd;		//1 before sigmoid

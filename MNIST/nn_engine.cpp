@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu June 1 2017
+*	Last Edited	: Fri June 2 2017
 *
 ****************************************************************/
 

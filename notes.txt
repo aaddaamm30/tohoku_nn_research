@@ -231,4 +231,19 @@ brain.runTrain();
 brain.evaluate();
 where runTrain will print out progress and ouput
 a weight .txt doc at the end and then evaluate
-will return an accuracy percent. 
+will return an accuracy percent.
+
+======================
+6/2/2017
+Today the goal is to get the backprop algorithm
+down. For the engine just have the ability to 
+return a matrix for each weight matrix of the 
+gradient decent and spit out what that value is.
+Next layer of abstraction will be evaluating 
+that and applying a step value to the gradient. 
+then applying that to the weights. Today still
+just laying groundwork on the nn_engine and 
+adding funcitons to the backbone for more abstract
+classes can utilize. 
+
+ 
