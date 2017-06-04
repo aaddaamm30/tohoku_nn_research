@@ -17,7 +17,7 @@ EXEC=neuralNetwork
 #may need to add libraries
 
 #filespecs
-SOURCES=read_mnist.o nn_driver.o nn_engine.o weight_driver.o
+SOURCES=read_mnist.o nn_driver.o nn_engine.o weight_driver.o nn_controller.o
 
 #make some shit
 all: $(SOURCES)  $(EXEC)
@@ -37,9 +37,20 @@ nn_engine.o: nn_engine.cpp nn_engine.h read_mnist.h
 weight_driver.o: weight_driver.cpp weight_driver.h
 	$(CC) $(CXXFLAGS) weight_driver.cpp
 
+nn_controller.o: nn_controller.cpp nn_controller.h nn_engine.h weight_driver.h read_mnist.h 
+	$(CC) $(CXXFLAGS) nn_controller.cpp
+
 #clean action
 clean: 
-	rm -f nn_engine.o read_mnist.o nn_driver.o weight_driver.o neuralNetwork train_data_unit.txt test_data_unit.txt io_unit.txt
+	rm -f neuralNetwork
+	rm -f read_mnist.o
+	rm -f nn_driver.o
+	rm -f weight_driver.o
+	rm -f nn_engine.o
+	rm -f nn_controller.o
+	rm -f train_data_unit.txt
+	rm -f test_data_unit.txt
+	rm -f io_unit.txt
 
 #remove unit test data
 unit:

@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Fri June 2 2017
+*	Last Edited	: Sun June 4 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -33,6 +33,7 @@ class neural_backbone{
 		
 		//constructor
 		neural_backbone(void);
+		int p_setStepSize(int i){return(this->m_step_size = i);}
 
 	protected:
 			
@@ -44,7 +45,6 @@ class neural_backbone{
 							 Eigen::MatrixXd**,
 							 Eigen::MatrixXd**);
 		int p_setInputVector(Eigen::VectorXi**);
-		int p_setStepSize(int i){return(this->m_step_size = i);}
 		
 		//pass functions for lots of control
 		int p_l1Pass(void);
@@ -52,18 +52,18 @@ class neural_backbone{
 		int p_l3Pass(void);
 		int p_l4Pass(void);
 		int p_softmax(void);
-	
+		
 		//getters for all vectors and weights that returns
 		//all eigenvectors in an array with the structure
 		//listed below
 		Eigen::VectorXd** p_getFPV(void);
+		Eigen::MatrixXd** p_getGradients(void);
 		
 		//backprop operations layer by layer
-		int p_bp_initial(int);
-		int p_bp_update(int);
+		int p_backprop(int);
 		
 		//weight updater
-		int p_updateWeigths(void);
+		int p_updateWeights(Eigen::MatrixXd**);
 
 		
 	//private attributes of abstract class neural_backbone
@@ -71,10 +71,6 @@ class neural_backbone{
 	
 		//important components of network
 		int m_step_size;
-	
-		//give access to mnist data blocks
-		mnist_block* m_training_block = new mnist_block(1);
-		mnist_block* m_testing_block = new mnist_block(0);
 		
 		//matrix to represent weights
 		Eigen::MatrixXd* m_w1 = NULL;
@@ -98,13 +94,9 @@ class neural_backbone{
 		Eigen::VectorXd* m_o_v4_a = new Eigen::VectorXd;	//raw output with simoid :(
 
 		//delta error for each layer
-		Eigen::VectorXd* m_delta_500 = new Eigen::VectorXd;
 		Eigen::MatrixXd* m_gradient_w1 = new Eigen::MatrixXd;
-		Eigen::VectorXd* m_delta_1000 = new Eigen::VectorXd;
 		Eigen::MatrixXd* m_gradient_w2 = new Eigen::MatrixXd;
-		Eigen::VectorXd* m_delta_50 = new Eigen::VectorXd;
 		Eigen::MatrixXd* m_gradient_w3 = new Eigen::MatrixXd;
-		Eigen::VectorXd* m_delta_10 = new Eigen::VectorXd;
 		Eigen::MatrixXd* m_gradient_w4 = new Eigen::MatrixXd;
 };
 
