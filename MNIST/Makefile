@@ -28,7 +28,7 @@ $(EXEC): $(SOURCES)
 read_mnist.o: read_mnist.cpp read_mnist.h
 	$(CC) $(CXXFLAGS) read_mnist.cpp
 
-nn_driver.o: nn_driver.cpp
+nn_driver.o: nn_driver.cpp nn_engine.h nn_controller.h
 	$(CC) $(CXXFLAGS) nn_driver.cpp
 
 nn_engine.o: nn_engine.cpp nn_engine.h read_mnist.h

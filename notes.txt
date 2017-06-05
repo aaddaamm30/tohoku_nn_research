@@ -217,7 +217,7 @@ So failed the test. That was fun. Moving on to
 what I enjoy more though I will be making setters
 and getters for the nn_engine class and some of
 the core forward pass math work along with the
-various ReLU and derivitave ReLU functions.
+various ReLU and derivitive ReLU functions.
 Hopefully Ill be able to make a unit test for 
 a forward pass operation. Also need to make 
 softmax classifier for 10 unit output vector.
@@ -229,7 +229,7 @@ brain.setBatchSize(x);
 brain.numberEpoch(x);
 brain.runTrain();
 brain.evaluate();
-where runTrain will print out progress and ouput
+where runTrain will print out progress and output
 a weight .txt doc at the end and then evaluate
 will return an accuracy percent.
 
@@ -243,7 +243,23 @@ Next layer of abstraction will be evaluating
 that and applying a step value to the gradient. 
 then applying that to the weights. Today still
 just laying groundwork on the nn_engine and 
-adding funcitons to the backbone for more abstract
+adding functions to the backbone for more abstract
 classes can utilize. 
 
+======================
+6/5/2017
+Finished all the back end work for the network
+now I just have to set up the front end command
+line handling. I will finish the program by today
+and it will will either train or test but not
+run whole analysis. It will either be testing or 
+training. Completed the neural_controller and 
+neural_engine. Working on the nn_driver main
+function and will build in appropriate components
+of that. Will mostly ignore or not work on the 
+unit tests. That can be a "for me" project. Just
+getting the program to run will be what I need to 
+do for the lab. Will hopefully be moving on to 
+FPGA by the end of this week. Or at least begin my
+background research on the topic.
  

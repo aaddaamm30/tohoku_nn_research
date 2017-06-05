@@ -9,7 +9,7 @@
 *				  neural_backbone class
 *
 *	Author		: Adam Loo
-*	Last Edited	: Sun June 4 2017
+*	Last Edited	: Mon June 5 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_CONTROLLER_
@@ -60,6 +60,6 @@ class neural_controller : public neural_backbone{
 
 		//path string for weight writing and reading
 		std::string m_fh;
-}
+};
 
 #endif

@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Sun June 4 2017
+*	Last Edited	: Mon June 5 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -33,18 +33,18 @@ class neural_backbone{
 		
 		//constructor
 		neural_backbone(void);
-		int p_setStepSize(int i){return(this->m_step_size = i);}
+		int p_setStepSize(double i);
 
 	protected:
 			
 		//setMatrixWeights used by higer level class
 		//to initialize weights to either random or 
 		//read in from the file_io class
-		int p_setMatrixWeights(Eigen::MatrixXd**,
-							 Eigen::MatrixXd**, 
-							 Eigen::MatrixXd**,
-							 Eigen::MatrixXd**);
-		int p_setInputVector(Eigen::VectorXi**);
+		int p_setMatrixWeights(Eigen::MatrixXd*,
+							 Eigen::MatrixXd*, 
+							 Eigen::MatrixXd*,
+							 Eigen::MatrixXd*);
+		int p_setInputVector(Eigen::VectorXi*);
 		
 		//pass functions for lots of control
 		int p_l1Pass(void);
@@ -64,13 +64,18 @@ class neural_backbone{
 		
 		//weight updater
 		int p_updateWeights(Eigen::MatrixXd**);
-
 		
+		//weight getter
+		Eigen::MatrixXd** p_getWeights(void);
+	
+		//get network analysis of number
+		int p_runNetwork(void);
+	
 	//private attributes of abstract class neural_backbone
 	private:
 	
 		//important components of network
-		int m_step_size;
+		double m_step_size;
 		
 		//matrix to represent weights
 		Eigen::MatrixXd* m_w1 = NULL;

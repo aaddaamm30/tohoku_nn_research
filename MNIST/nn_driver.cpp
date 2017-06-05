@@ -17,6 +17,7 @@
 #include "read_mnist.h"
 #include "weight_driver.h"
 #include "nn_engine.h"
+#include "nn_controller.h"
 
 // Define section
 #define USAGE \
@@ -27,9 +28,7 @@
 	"	-u ~ unit test specific part of network\n" \
 	"		<system> options\n" \
 	"			r - mnist reader\n" \
-	"			m - matrix feed forward\n" \
 	"			o - file output creation\n" \
-	"			g - gradient decent math\n" \
 	"	-train ~ trains network from randomized\n" \
 	"			 weights and makes a file with\n" \
 	"			 trained weights for test input.\n" \
@@ -44,6 +43,9 @@
 	"		network\n\n" \
 	"NOTE: Network only accepts one operation at\n" \
 	"      a time and will fail otherwise.\n" \
+
+//	"			m - matrix feed forward\n" \//
+//	"			g - gradient decent math\n" \//
 
 //prototypes
 
@@ -61,7 +63,9 @@
 *************************************************************/
 
 int main(int argc, char **argv){
-	
+
+	neural_controller nc;
+		
 	if(argc < 2 || argc > 4){
 		std::cout << "ERROR: invalid command line argments (use [-h] for help)" << std::endl << std::endl;
 		return(1);
@@ -105,14 +109,82 @@ int main(int argc, char **argv){
 
 	//case of train
 	if((std::string)argv[1] == "-train"){
-		//train function here
+		
+		//get command line arguemtns
+		if(argc == 3){
+			int epoc = 1, batch = 100;
+			double step = .001;
+			std::string fh = (std::string)argv[2];
+			nc.establishPath(fh);
+			std::cout<<"\n------------------------------------";
+			std::cout<<"\nSet Epoch (default 1)        : ";
+			std::cin>>epoc;
+			std::cout<<"------------------------------------";
+			std::cout<<"\nSet Batch Size (default 100) : ";
+			std::cin>>batch;
+			std::cout<<"------------------------------------";
+			std::cout<<"\nSet Step Size (defult .001)  : ";
+			std::cin>>step;
+			std::cout<<"------------------------------------";
+		
+			if(epoc<=0||batch<=0||step <=0){
+				std::cout<<"\n||INVALID INPUT||\n";
+				return(1);
+			}
+
+			std::cout<<"\nNetwork settings"<<std::endl;
+			std::cout<<"Epoch : "<<epoc<<std::endl;			
+			std::cout<<"Batch : "<<batch<<std::endl;			
+		
+			//save values into nc
+			if(nc.setEpoch(epoc)){
+				std::cout<<"ERROR: failure setting Epoch value\n";
+				return(1);
+			}
+			if(nc.setBatch(batch)){
+				std::cout<<"ERROR: failure setting batch value\n";
+				return(1);
+			}
+			if(nc.p_setStepSize(step)){
+				std::cout<<"ERROR: failure setting step size\n";
+				return(1);
+			}
+				
+			//train the network (ptl)
+			if(nc.train()){
+				std::cout<<"ERROR: training network failure\n";
+				return(1);
+			}
+		
+		//case for invalid command line parameters
+		}else{
+			std::cout << "ERROR: invalid command line argments (use [-h] for help)\n";
+			return(1);
+		}
 		return(0);
 	}
 	
 	//case of test
 	if((std::string)argv[1] == "-test"){
-		//test function here
-		return(0);
+		
+		//test for valid command line arguments
+		if(argc == 3){
+			std::string fh = (std::string)argv[2];
+			
+			//load path
+			nc.establishPath(fh);
+
+			//run network
+			if(nc.test()){
+				std::cout<<"ERROR: testing network failure\n";
+				return(1);
+			}
+		}else{
+			std::cout << "ERROR: invalid command line argments (use [-h] for help)\n";
+			return(1);
+		}		
+			return(0);
+	
 	}
 	
 	//invalid input

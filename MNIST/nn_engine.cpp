@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Sun June 4 2017
+*	Last Edited	: Mon June 5 2017
 *
 ****************************************************************/
 
@@ -59,23 +59,32 @@ neural_backbone::neural_backbone(){
 ////////////////////////////////////////////////////////
 //matrix set weights
 ////////////////////////////////////////////////////////
-int neural_backbone::p_setMatrixWeights(Eigen::MatrixXd** mx1, 
-									  Eigen::MatrixXd** mx2,
-					 				  Eigen::MatrixXd** mx3,
-					 				  Eigen::MatrixXd** mx4){
-	m_w1 = *mx1;
-	m_w2 = *mx2;
-	m_w3 = *mx3;
-	m_o_w4 = *mx4;
+int neural_backbone::p_setMatrixWeights(Eigen::MatrixXd* mx1, 
+									  Eigen::MatrixXd* mx2,
+					 				  Eigen::MatrixXd* mx3,
+					 				  Eigen::MatrixXd* mx4){
+	m_w1 = mx1;
+	m_w2 = mx2;
+	m_w3 = mx3;
+	m_o_w4 = mx4;
 
+	return(0);
+}
+
+//////////////////////////////////////////////////////////
+//setter for step size
+//////////////////////////////////////////////////////////
+int neural_backbone::p_setStepSize(double i){
+	
+	m_step_size = i;
 	return(0);
 }
 
 //////////////////////////////////////////////////////////
 //setter for a single input vector
 //////////////////////////////////////////////////////////
-int neural_backbone::p_setInputVector(Eigen::VectorXi** in){
-	m_inputVec = *in;
+int neural_backbone::p_setInputVector(Eigen::VectorXi* in){
+	m_inputVec = in;
 	return(0);
 }
 
@@ -253,6 +262,48 @@ int neural_backbone::p_updateWeights(Eigen::MatrixXd** gradDec){
 	*m_w3 = *m_w3 + ((*gradDec[2]) * m_step_size);
 	*m_o_w4 = *m_o_w4 + ((*gradDec[3]) * m_step_size);
 	return(0);
+}
+
+//////////////////////////////////////////////////////////
+//weight getter
+//	- returns weights
+//////////////////////////////////////////////////////////
+Eigen::MatrixXd** neural_backbone::p_getWeights(void){
+	
+	Eigen::MatrixXd** bruh = new Eigen::MatrixXd*[4];
+	bruh[0] = m_w1;
+	bruh[1] = m_w2;
+	bruh[2] = m_w3;
+	bruh[3] = m_o_w4;
+
+	return(bruh);
+}
+
+//////////////////////////////////////////////////////////
+//runs network and returns number
+//	- calculates softmax and evaluates sofmax value
+//////////////////////////////////////////////////////////
+int neural_backbone::p_runNetwork(void){
+
+	int output;
+	int biggest = 0;
+
+	//run network
+	p_l1Pass();	
+	p_l2Pass();	
+	p_l3Pass();	
+	p_l4Pass();	
+	p_softmax();
+
+	for(int i = 0; i < 10; i++){
+		if((*m_outVec)(i) > biggest){
+			biggest = (*m_outVec)(i);
+			output = i;
+		}else if((*m_outVec)(i) == biggest){
+			std::cout<<"EXCEPTION:tied guess between "<<output<<" and "<<i<<"\n";
+		}
+	}
+	return(output);
 }
 
 //////////////////////////////////////////////////////////
