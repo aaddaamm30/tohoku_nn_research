@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon June 5 2017
+*	Last Edited	: Tue June 6 2017
 *
 ****************************************************************/
 
@@ -20,6 +20,7 @@
 #include <Eigen/Dense>
 #include <unistd.h>
 #include <stdlib.h>
+#include <fstream>
 #include "weight_driver.h"
 #include "read_mnist.h"
 #include "nn_engine.h"
@@ -44,7 +45,7 @@ neural_backbone::neural_backbone(){
 	m_v3_w->resize(50);
 	m_v3_a->resize(50);
 	m_o_v4_w->resize(10);
-	m_o_v4_w->resize(10);
+	m_o_v4_a->resize(10);
 	m_outVec->resize(10);
 	m_lblVec->resize(10);
 	
@@ -113,7 +114,7 @@ int neural_backbone::p_l3Pass(void){
 	return(0);
 }
 int neural_backbone::p_l4Pass(void){
-	(*m_o_v4_w) = (*m_w3) * (*m_v2_a);
+	(*m_o_v4_w) = (*m_o_w4) * (*m_v3_a);
 	(*m_o_v4_a) = ReLU(*m_o_v4_w);
 	return(0);
 }
@@ -125,8 +126,11 @@ int neural_backbone::p_l4Pass(void){
 //////////////////////////////////////////////////////////
 int neural_backbone::p_softmax(void){
 
-	int size = m_o_v4_a->sum();
-	(*m_outVec) = (*m_o_v4_a) / size;
+	double size = 0;
+	for(int j=0; j<10; j++){
+		size+=(*m_o_v4_a)(j);
+	}
+	*m_outVec = *m_o_v4_a / size;
 	return(0);
 }
 
@@ -138,7 +142,7 @@ int neural_backbone::p_softmax(void){
 //////////////////////////////////////////////////////////
 Eigen::VectorXd** neural_backbone::p_getFPV(void){
 
-	Eigen::VectorXd** FPV = new Eigen::VectorXd*[7];
+	Eigen::VectorXd** FPV = new Eigen::VectorXd*[9];
 
 	FPV[0] = m_v1_w;
 	FPV[1] = m_v1_a;
@@ -147,7 +151,8 @@ Eigen::VectorXd** neural_backbone::p_getFPV(void){
 	FPV[4] = m_v3_w;
 	FPV[5] = m_v3_a;
 	FPV[6] = m_o_v4_w;
-
+	FPV[7] = m_o_v4_a;
+	FPV[8] = m_outVec;
 	return(FPV);
 }
 
@@ -176,11 +181,12 @@ Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 //	- accepts argument of label
 //////////////////////////////////////////////////////////
 int neural_backbone::p_backprop(int lbl){
-
+	
 	//tmp vectors
 	Eigen::VectorXd gradient;
 	Eigen::VectorXd insigmoid;
 	Eigen::VectorXd delta;
+	Eigen::MatrixXd tps;
 	
 	//reset lblvector to unit vector
 	for(int i = 0; i < m_lblVec->rows(); i++)
@@ -208,9 +214,10 @@ int neural_backbone::p_backprop(int lbl){
 	// resize tmp vectors
 	gradient.resize(50);
 	insigmoid.resize(50);
-	delta.resize(50);
 	//calculate error for next layer in
-	gradient = (*m_o_w4).transpose() * delta;
+	tps = m_o_w4->transpose(); 
+	gradient = tps * delta;
+	delta.resize(50);
 	insigmoid = ReLU_prime(*m_v3_w);
 	delta = gradient.cwiseProduct(insigmoid);
 	for(int j = 0; j < delta.rows(); j++){
@@ -222,8 +229,9 @@ int neural_backbone::p_backprop(int lbl){
 	//backprop through 500 neuron layer
 	gradient.resize(1000);
 	insigmoid.resize(1000);
+	tps = m_w3->transpose();
+	gradient = tps * delta;
 	delta.resize(1000);
-	gradient = (*m_w3).transpose() * delta;
 	insigmoid = ReLU_prime(*m_v2_w);
 	delta = gradient.cwiseProduct(insigmoid);
 	for(int j = 0; j < delta.rows(); j++){
@@ -235,8 +243,9 @@ int neural_backbone::p_backprop(int lbl){
 	//backprop through 10 neuron layer
 	gradient.resize(500);
 	insigmoid.resize(500);
+	tps = m_w2->transpose();
+	gradient = tps * delta;
 	delta.resize(500);
-	gradient = (*m_w3).transpose() * delta;
 	insigmoid = ReLU_prime(*m_v1_w);
 	delta = gradient.cwiseProduct(insigmoid);
 	for(int j = 0; j < delta.rows(); j++){
@@ -257,6 +266,16 @@ int neural_backbone::p_backprop(int lbl){
 //////////////////////////////////////////////////////////
 int neural_backbone::p_updateWeights(Eigen::MatrixXd** gradDec){
 
+	std::ofstream f;
+	f.open("debug_update.txt");
+
+	f<<"Step size = "<<m_step_size;
+	f<<"\nUpdate w1 info\nm_w1="<<m_w1<<std::endl;
+	f<<"*m_w1\n"<<*m_w1<<std::endl;
+	f<<"gradDec[0]="<<gradDec[0]<<std::endl;
+	f<<"*gradDec[0]\n"<<*gradDec[0]<<std::endl;
+	f<<"(*gradDec[0]) * m_step_size"<<(*gradDec[0]) * m_step_size<<std::endl;
+	f<<"*m_w1 + ((*gradDec[0]) * m_step_size)\n"<<*m_w1 + ((*gradDec[0]) * m_step_size)<<std::endl;
 	*m_w1 = *m_w1 + ((*gradDec[0]) * m_step_size);
 	*m_w2 = *m_w2 + ((*gradDec[1]) * m_step_size);
 	*m_w3 = *m_w3 + ((*gradDec[2]) * m_step_size);
@@ -285,7 +304,7 @@ Eigen::MatrixXd** neural_backbone::p_getWeights(void){
 //////////////////////////////////////////////////////////
 int neural_backbone::p_runNetwork(void){
 
-	int output;
+	int output = -1;
 	int biggest = 0;
 
 	//run network
@@ -300,7 +319,7 @@ int neural_backbone::p_runNetwork(void){
 			biggest = (*m_outVec)(i);
 			output = i;
 		}else if((*m_outVec)(i) == biggest){
-			std::cout<<"EXCEPTION:tied guess between "<<output<<" and "<<i<<"\n";
+			//std::cout<<"EXCEPTION:tied guess between "<<output<<" and "<<i<<"\n";
 		}
 	}
 	return(output);

@@ -51,7 +51,8 @@ clean:
 	rm -f train_data_unit.txt
 	rm -f test_data_unit.txt
 	rm -f io_unit.txt
+	rm -f unit_forward_pass_test.txt
 
 #remove unit test data
 unit:
-	rm -f train_data_unit.txt test_data_unit.txt io_unit.txt
+	rm -f train_data_unit.txt test_data_unit.txt io_unit.txt unit_forward_pass_test.txt

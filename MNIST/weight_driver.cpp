@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Tue May 30 2017
+*	Last Edited	: Mon June 6 2017
 *
 ****************************************************************/
 
@@ -73,23 +73,23 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 	//randomizing values between -.5 and .5
 	for(int i = 0; i < (*w1)->rows(); i++){
 		for(int j = 0; j < (*w1)->cols(); j++){
-			(**w1)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+			(**w1)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
 		}
 	}
 	for(int i = 0; i < (*w2)->rows(); i++){
 		for(int j = 0; j < (*w2)->cols(); j++){
-			(**w2)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+			(**w2)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
 		}
 	}
 	for(int i = 0; i < (*w3)->rows(); i++){
 		for(int j = 0; j < (*w3)->cols(); j++){
-			(**w3)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+			(**w3)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
 		}
 	}
 
 	for(int i = 0; i < (*o4)->rows(); i++){
 		for(int j = 0; j < (*o4)->cols(); j++){
-			(**o4)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .3);
+			(**o4)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
 		}
 	}
 

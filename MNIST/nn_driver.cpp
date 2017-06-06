@@ -29,6 +29,7 @@
 	"		<system> options\n" \
 	"			r - mnist reader\n" \
 	"			o - file output creation\n" \
+	"			m - matrix feed forward\n" \
 	"	-train ~ trains network from randomized\n" \
 	"			 weights and makes a file with\n" \
 	"			 trained weights for test input.\n" \
@@ -44,7 +45,6 @@
 	"NOTE: Network only accepts one operation at\n" \
 	"      a time and will fail otherwise.\n" \
 
-//	"			m - matrix feed forward\n" \//
 //	"			g - gradient decent math\n" \//
 
 //prototypes
@@ -99,11 +99,19 @@ int main(int argc, char **argv){
 			file_io* unit = new file_io();
 			unit->run_unit((std::string)argv[3]);
 			return(0);
-		}else{	
+		}else if((std::string)argv[2] == "o" && argc != 4){	
 			std::cout << "ERROR: invalid command line argments (use [-h] for help)\n"
 					  << "[You may be missing a file name]\n";
 			return(1);
 		}
+
+		//runs unit test on feed forward
+		if((std::string)argv[2] == "m" && argc == 4){
+			nc.unit_fpv((std::string)argv[3]);
+		}else if((std::string)argv[2] == "m" && argc == 3){
+			nc.unit_fpv("");
+		}
+		
 		return(0);
 	}
 
@@ -115,17 +123,20 @@ int main(int argc, char **argv){
 			int epoc = 1, batch = 100;
 			double step = .001;
 			std::string fh = (std::string)argv[2];
+			
+			std::cout<<"\n====================================";
+			std::cout<<"\n=========NEURAL NET TRAINER=========\n";
 			nc.establishPath(fh);
-			std::cout<<"\n------------------------------------";
-			std::cout<<"\nSet Epoch (default 1)        : ";
+			std::cout<<"\n====================================";
+			std::cout<<"\nSet Epoch      : ";
 			std::cin>>epoc;
-			std::cout<<"------------------------------------";
-			std::cout<<"\nSet Batch Size (default 100) : ";
+			std::cout<<"====================================";
+			std::cout<<"\nSet Batch Size : ";
 			std::cin>>batch;
-			std::cout<<"------------------------------------";
-			std::cout<<"\nSet Step Size (defult .001)  : ";
+			std::cout<<"====================================";
+			std::cout<<"\nSet Step Size  : ";
 			std::cin>>step;
-			std::cout<<"------------------------------------";
+			std::cout<<"====================================";
 		
 			if(epoc<=0||batch<=0||step <=0){
 				std::cout<<"\n||INVALID INPUT||\n";

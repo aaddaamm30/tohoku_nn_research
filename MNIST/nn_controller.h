@@ -42,7 +42,7 @@ class neural_controller : public neural_backbone{
 		int fullSend(void);
 	
 		//unit tests [may not get around to writing]
-		int unit_fpv(void);
+		int unit_fpv(std::string);
 		int unit_backprop(void);
 
 	private:
