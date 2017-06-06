@@ -52,7 +52,8 @@ clean:
 	rm -f test_data_unit.txt
 	rm -f io_unit.txt
 	rm -f unit_forward_pass_test.txt
-
+	rm -f aa*
+	rm -f debug_*
 #remove unit test data
 unit:
 	rm -f train_data_unit.txt test_data_unit.txt io_unit.txt unit_forward_pass_test.txt

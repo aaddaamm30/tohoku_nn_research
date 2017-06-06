@@ -262,4 +262,7 @@ getting the program to run will be what I need to
 do for the lab. Will hopefully be moving on to 
 FPGA by the end of this week. Or at least begin my
 background research on the topic.
- 
+
+=====================
+6/6/2017
+Lotta good moves. 

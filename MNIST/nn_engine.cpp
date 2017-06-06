@@ -21,6 +21,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fstream>
+#include <cmath>
+#include <iomanip>
 #include "weight_driver.h"
 #include "read_mnist.h"
 #include "nn_engine.h"
@@ -28,6 +30,8 @@
 //prototypes
 Eigen::VectorXd ReLU(Eigen::VectorXd);
 Eigen::VectorXd ReLU_prime(Eigen::VectorXd);
+Eigen::VectorXd sigmoid(Eigen::VectorXd);
+Eigen::VectorXd sigmoid_prime(Eigen::VectorXd);
 
 ////////////////////////////////////////////////////////
 //constructor
@@ -100,22 +104,21 @@ int neural_backbone::p_setInputVector(Eigen::VectorXi* in){
 int neural_backbone::p_l1Pass(void){
 	Eigen::VectorXd n = (*m_inputVec).cast<double>();
 	(*m_v1_w) = (*m_w1) * n;
-	(*m_v1_a) = ReLU(*m_v1_w);
+	(*m_v1_a) = sigmoid(*m_v1_w);
 	return(0);
 }
 int neural_backbone::p_l2Pass(void){
 	(*m_v2_w) = (*m_w2) * (*m_v1_a);
-	(*m_v2_a) = ReLU(*m_v2_w);
+	(*m_v2_a) = sigmoid(*m_v2_w);
 	return(0);
 }
 int neural_backbone::p_l3Pass(void){
 	(*m_v3_w) = (*m_w3) * (*m_v2_a);
-	(*m_v3_a) = ReLU(*m_v3_w);
+	(*m_v3_a) = sigmoid(*m_v3_w);
 	return(0);
 }
 int neural_backbone::p_l4Pass(void){
 	(*m_o_v4_w) = (*m_o_w4) * (*m_v3_a);
-	(*m_o_v4_a) = ReLU(*m_o_v4_w);
 	return(0);
 }
 
@@ -127,10 +130,13 @@ int neural_backbone::p_l4Pass(void){
 int neural_backbone::p_softmax(void){
 
 	double size = 0;
+
 	for(int j=0; j<10; j++){
-		size+=(*m_o_v4_a)(j);
+		size += (*m_o_v4_w)(j);
 	}
-	*m_outVec = *m_o_v4_a / size;
+
+	*m_outVec = *m_o_v4_w / size;
+
 	return(0);
 }
 
@@ -165,6 +171,9 @@ Eigen::VectorXd** neural_backbone::p_getFPV(void){
 Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 	
 	Eigen::MatrixXd** grads = new Eigen::MatrixXd*[4];
+	std::ofstream f;
+	f.open("debug_gradients.txt");
+	f<<"w1\n"<<*m_gradient_w1<<"\nw2\n"<<*m_gradient_w2<<"\nw3\n"<<*m_gradient_w3<<"\nw4\n"<<*m_gradient_w4<<std::endl;
 	grads[0] = m_gradient_w1;
 	grads[1] = m_gradient_w2;
 	grads[2] = m_gradient_w3;
@@ -187,6 +196,10 @@ int neural_backbone::p_backprop(int lbl){
 	Eigen::VectorXd insigmoid;
 	Eigen::VectorXd delta;
 	Eigen::MatrixXd tps;
+
+	//file help
+	std::ofstream f;
+	f.open("debug_backpropalg.txt");
 	
 	//reset lblvector to unit vector
 	for(int i = 0; i < m_lblVec->rows(); i++)
@@ -199,9 +212,15 @@ int neural_backbone::p_backprop(int lbl){
 	delta.resize(10);
 	//derivitave or cost
 	gradient = (*m_outVec) - (*m_lblVec);
-	insigmoid = ReLU_prime(*m_o_v4_w);
+	insigmoid = sigmoid_prime(*m_o_v4_w);
+
+	
 	//delta is derivitave of error
-	delta = gradient.cwiseProduct(insigmoid);
+	for(int i=0; i<insigmoid.rows(); i++){
+		delta(i) = gradient(i) * insigmoid(i);
+	}
+//	delta = gradient.cwiseProduct(insigmoid);
+
 	//apply error to each weight in m_gradient_w4
 	//using the input signal as k and delta from j
 	for(int j = 0; j < delta.rows(); j++){
@@ -218,8 +237,14 @@ int neural_backbone::p_backprop(int lbl){
 	tps = m_o_w4->transpose(); 
 	gradient = tps * delta;
 	delta.resize(50);
-	insigmoid = ReLU_prime(*m_v3_w);
-	delta = gradient.cwiseProduct(insigmoid);
+	insigmoid = sigmoid_prime(*m_v3_w);
+	for(int i=0; i<insigmoid.rows(); i++){
+		delta(i) = gradient(i) * insigmoid(i);
+	}
+//	delta = gradient.cwiseProduct(insigmoid);
+
+	f<<"w3\n";
+
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v2_a->rows(); k++){
 			(*m_gradient_w3)(j,k) = delta(j) * (*m_v2_a)(k);
@@ -232,11 +257,16 @@ int neural_backbone::p_backprop(int lbl){
 	tps = m_w3->transpose();
 	gradient = tps * delta;
 	delta.resize(1000);
-	insigmoid = ReLU_prime(*m_v2_w);
-	delta = gradient.cwiseProduct(insigmoid);
+	insigmoid = sigmoid_prime(*m_v2_w);
+	for(int i=0; i<insigmoid.rows(); i++){
+		delta(i) = gradient(i) * insigmoid(i);
+	}
+//	delta = gradient.cwiseProduct(insigmoid);
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v1_a->rows(); k++){
 			(*m_gradient_w2)(j,k) = delta(j) * (*m_v1_a)(k);
+
+			f<<std::setw(11)<<delta(j)<<"|"<<(*m_v2_a)(k)<<std::endl;
 		}
 	}
 
@@ -246,8 +276,12 @@ int neural_backbone::p_backprop(int lbl){
 	tps = m_w2->transpose();
 	gradient = tps * delta;
 	delta.resize(500);
-	insigmoid = ReLU_prime(*m_v1_w);
-	delta = gradient.cwiseProduct(insigmoid);
+	insigmoid = sigmoid_prime(*m_v1_w);
+	for(int i=0; i<insigmoid.rows(); i++){
+		delta(i) = gradient(i) * insigmoid(i);
+	}
+//	delta = gradient.cwiseProduct(insigmoid);
+	f<<"w1\n";
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_inputVec->rows(); k++){
 			(*m_gradient_w1)(j,k) = delta(j) * (*m_inputVec)(k);
@@ -255,7 +289,6 @@ int neural_backbone::p_backprop(int lbl){
 	}
 
 	return(0);
-	
 }
 
 //////////////////////////////////////////////////////////
@@ -356,3 +389,38 @@ Eigen::VectorXd ReLU_prime(Eigen::VectorXd avec){
 	return(avec);
 }
 
+//////////////////////////////////////////////////////////
+//sigmoid math function
+//	- sigmoid function implemented across all units in an
+//	  array. 
+//////////////////////////////////////////////////////////
+Eigen::VectorXd sigmoid(Eigen::VectorXd in){
+	
+	Eigen::VectorXd cig;
+	cig.resize(in.rows());
+	
+	for(int i=0; i<in.rows(); i++){
+		cig(i) = 1/(1+exp(-in(i)));
+	}
+
+	return(cig);
+}
+
+//////////////////////////////////////////////////////////
+//sigmoid prime math function
+//	- sigmoid function implemented across all units in an
+//	  array returning an eigen vector 
+//////////////////////////////////////////////////////////
+Eigen::VectorXd sigmoid_prime(Eigen::VectorXd in){
+
+	Eigen::VectorXd cigp;
+	cigp.resize(in.rows());
+	double cig;
+
+	for(int i=0; i<in.rows(); i++){
+		cig = 1/(1+exp(-in(i)));
+		cigp(i) = cig * (1 - cig);
+	}
+
+	return(cigp);
+}
