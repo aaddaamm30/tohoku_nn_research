@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Tue June 6 2017
+*	Last Edited	: Wed June 7 2017
 *
 ****************************************************************/
 
@@ -212,15 +212,21 @@ int neural_backbone::p_backprop(int lbl){
 	delta.resize(10);
 	//derivitave or cost
 	gradient = (*m_outVec) - (*m_lblVec);
+	
+	f<<"aa\n"<<gradient<<std::endl;
+	
 	insigmoid = sigmoid_prime(*m_o_v4_w);
 
-	
+	f<<"bb\n"<<insigmoid<<std::endl;
+
 	//delta is derivitave of error
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
 //	delta = gradient.cwiseProduct(insigmoid);
 
+	f<<"cc\n"<<delta<<std::endl;
+	
 	//apply error to each weight in m_gradient_w4
 	//using the input signal as k and delta from j
 	for(int j = 0; j < delta.rows(); j++){
@@ -229,6 +235,10 @@ int neural_backbone::p_backprop(int lbl){
 		}
 	}
 	
+	//log the gradient to keep data within safe bounds
+//	for(int aa=0;aa<delta.rows();aa++)
+//		delta(aa) = log(delta(aa));
+	
 	//bckprop through to 1000 neuron layer
 	// resize tmp vectors
 	gradient.resize(50);
@@ -236,6 +246,11 @@ int neural_backbone::p_backprop(int lbl){
 	//calculate error for next layer in
 	tps = m_o_w4->transpose(); 
 	gradient = tps * delta;
+
+	f<<"ac\n"<<delta<<std::endl;
+	f<<"ee\n"<<tps<<std::endl;
+	f<<"dd\n"<<gradient<<std::endl;
+
 	delta.resize(50);
 	insigmoid = sigmoid_prime(*m_v3_w);
 	for(int i=0; i<insigmoid.rows(); i++){
@@ -243,45 +258,69 @@ int neural_backbone::p_backprop(int lbl){
 	}
 //	delta = gradient.cwiseProduct(insigmoid);
 
-	f<<"w3\n";
-
+	f<<"ff\n"<<delta<<std::endl;
+	f<<"cg2\n"<<insigmoid<<std::endl;
+	
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v2_a->rows(); k++){
 			(*m_gradient_w3)(j,k) = delta(j) * (*m_v2_a)(k);
 		}
 	}
 
+	//log the gradient to keep data within safe bounds
+//	for(int aa=0;aa<delta.rows();aa++)
+//		delta(aa) = log(delta(aa));
+
 	//backprop through 500 neuron layer
 	gradient.resize(1000);
 	insigmoid.resize(1000);
 	tps = m_w3->transpose();
 	gradient = tps * delta;
+
+	f<<"gg\n"<<tps<<std::endl;
+	f<<"hh\n"<<gradient<<std::endl;
+
 	delta.resize(1000);
 	insigmoid = sigmoid_prime(*m_v2_w);
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
 //	delta = gradient.cwiseProduct(insigmoid);
+
+	f<<"ii\n"<<delta<<std::endl;
+	f<<"cg3\n"<<insigmoid<<std::endl;
+
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v1_a->rows(); k++){
 			(*m_gradient_w2)(j,k) = delta(j) * (*m_v1_a)(k);
 
-			f<<std::setw(11)<<delta(j)<<"|"<<(*m_v2_a)(k)<<std::endl;
+//			f<<std::setw(11)<<delta(j)<<"|"<<(*m_v2_a)(k)<<std::endl;
 		}
 	}
 
+	//log the gradient to keep data within safe bounds
+//	for(int aa=0;aa<delta.rows();aa++)
+//		delta(aa) = log(delta(aa));
+	
 	//backprop through 10 neuron layer
 	gradient.resize(500);
 	insigmoid.resize(500);
 	tps = m_w2->transpose();
 	gradient = tps * delta;
+
+	f<<"jj\n"<<tps<<std::endl;
+	f<<"kk\n"<<gradient<<std::endl;
+
 	delta.resize(500);
 	insigmoid = sigmoid_prime(*m_v1_w);
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
 //	delta = gradient.cwiseProduct(insigmoid);
-	f<<"w1\n";
+
+	f<<"ll\n"<<delta<<std::endl;
+	f<<"cg4\n"<<insigmoid<<std::endl;
+
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_inputVec->rows(); k++){
 			(*m_gradient_w1)(j,k) = delta(j) * (*m_inputVec)(k);

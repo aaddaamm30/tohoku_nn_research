@@ -266,3 +266,10 @@ background research on the topic.
 =====================
 6/6/2017
 Lotta good moves. 
+
+=====================
+6/7/2017
+Going to try to apply a log function across the delta
+values to avoid crazy oversized or undersided 
+gradient updates.
+
