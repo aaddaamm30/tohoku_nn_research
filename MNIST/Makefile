@@ -52,7 +52,7 @@ clean:
 	rm -f test_data_unit.txt
 	rm -f io_unit.txt
 	rm -f unit_forward_pass_test.txt
-	rm -f aa*
+	rm -f a*
 	rm -f debug_*
 #remove unit test data
 unit:

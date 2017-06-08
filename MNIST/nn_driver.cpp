@@ -136,17 +136,13 @@ int main(int argc, char **argv){
 			std::cout<<"====================================";
 			std::cout<<"\nSet Step Size  : ";
 			std::cin>>step;
-			std::cout<<"====================================";
+			std::cout<<"====================================\n";
 		
 			if(epoc<=0||batch<=0||step <=0){
-				std::cout<<"\n||INVALID INPUT||\n";
+				std::cout<<"\n\n||INVALID INPUT||\n";
 				return(1);
 			}
 
-			std::cout<<"\nNetwork settings"<<std::endl;
-			std::cout<<"Epoch : "<<epoc<<std::endl;			
-			std::cout<<"Batch : "<<batch<<std::endl;			
-		
 			//save values into nc
 			if(nc.setEpoch(epoc)){
 				std::cout<<"ERROR: failure setting Epoch value\n";

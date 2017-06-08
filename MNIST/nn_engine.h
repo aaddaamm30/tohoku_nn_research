@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon June 5 2017
+*	Last Edited	: Thu June 8 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -60,17 +60,20 @@ class neural_backbone{
 		Eigen::MatrixXd** p_getGradients(void);
 		
 		//backprop operations layer by layer
-		int p_backprop(int);
+		int p_backprop(int,int);
 		
 		//weight updater
-		int p_updateWeights(Eigen::MatrixXd**);
+		int p_updateWeights();
 		
 		//weight getter
 		Eigen::MatrixXd** p_getWeights(void);
 	
 		//get network analysis of number
 		int p_runNetwork(void);
-	
+
+		//get step size 
+		double p_getStep(void){return(m_step_size);}
+
 	//private attributes of abstract class neural_backbone
 	private:
 	

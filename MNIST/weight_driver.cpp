@@ -73,17 +73,17 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 	//randomizing values between -.5 and .5
 	for(int i = 0; i < (*w1)->rows(); i++){
 		for(int j = 0; j < (*w1)->cols(); j++){
-			(**w1)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
+			(**w1)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
 	for(int i = 0; i < (*w2)->rows(); i++){
 		for(int j = 0; j < (*w2)->cols(); j++){
-			(**w2)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
+			(**w2)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
 	for(int i = 0; i < (*w3)->rows(); i++){
 		for(int j = 0; j < (*w3)->cols(); j++){
-			(**w3)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
+			(**w3)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
 

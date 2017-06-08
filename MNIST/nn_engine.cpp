@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Wed June 7 2017
+*	Last Edited	: Thu June 8 2017
 *
 ****************************************************************/
 
@@ -132,11 +132,13 @@ int neural_backbone::p_softmax(void){
 	double size = 0;
 
 	for(int j=0; j<10; j++){
-		size += (*m_o_v4_w)(j);
+		size += exp((*m_o_v4_w)(j));
 	}
-
-	*m_outVec = *m_o_v4_w / size;
-
+	
+	for(int j=0; j<10; j++){
+		(*m_outVec)(j) = exp((*m_o_v4_w)(j)) / size;
+	}
+	
 	return(0);
 }
 
@@ -171,9 +173,10 @@ Eigen::VectorXd** neural_backbone::p_getFPV(void){
 Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 	
 	Eigen::MatrixXd** grads = new Eigen::MatrixXd*[4];
-	std::ofstream f;
-	f.open("debug_gradients.txt");
-	f<<"w1\n"<<*m_gradient_w1<<"\nw2\n"<<*m_gradient_w2<<"\nw3\n"<<*m_gradient_w3<<"\nw4\n"<<*m_gradient_w4<<std::endl;
+
+//	std::ofstream f;
+//	f.open("debug_gradients.txt");
+
 	grads[0] = m_gradient_w1;
 	grads[1] = m_gradient_w2;
 	grads[2] = m_gradient_w3;
@@ -189,7 +192,7 @@ Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 //	- sets value to the m_delta_* vectors 
 //	- accepts argument of label
 //////////////////////////////////////////////////////////
-int neural_backbone::p_backprop(int lbl){
+int neural_backbone::p_backprop(int lbl, int batchsize){
 	
 	//tmp vectors
 	Eigen::VectorXd gradient;
@@ -198,8 +201,8 @@ int neural_backbone::p_backprop(int lbl){
 	Eigen::MatrixXd tps;
 
 	//file help
-	std::ofstream f;
-	f.open("debug_backpropalg.txt");
+//	std::ofstream f;
+//	f.open("debug_backpropalg.txt");
 	
 	//reset lblvector to unit vector
 	for(int i = 0; i < m_lblVec->rows(); i++)
@@ -213,31 +216,21 @@ int neural_backbone::p_backprop(int lbl){
 	//derivitave or cost
 	gradient = (*m_outVec) - (*m_lblVec);
 	
-	f<<"aa\n"<<gradient<<std::endl;
-	
 	insigmoid = sigmoid_prime(*m_o_v4_w);
-
-	f<<"bb\n"<<insigmoid<<std::endl;
 
 	//delta is derivitave of error
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
-//	delta = gradient.cwiseProduct(insigmoid);
-
-	f<<"cc\n"<<delta<<std::endl;
 	
 	//apply error to each weight in m_gradient_w4
 	//using the input signal as k and delta from j
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v3_a->rows(); k++){
-			(*m_gradient_w4)(j,k) = delta(j) * (*m_v3_a)(k);
+			if((*m_v3_a)(k) != 0 && delta(j) !=0)
+				(*m_gradient_w4)(j,k) += (delta(j) * (*m_v3_a)(k)) / batchsize;
 		}
 	}
-	
-	//log the gradient to keep data within safe bounds
-//	for(int aa=0;aa<delta.rows();aa++)
-//		delta(aa) = log(delta(aa));
 	
 	//bckprop through to 1000 neuron layer
 	// resize tmp vectors
@@ -247,83 +240,52 @@ int neural_backbone::p_backprop(int lbl){
 	tps = m_o_w4->transpose(); 
 	gradient = tps * delta;
 
-	f<<"ac\n"<<delta<<std::endl;
-	f<<"ee\n"<<tps<<std::endl;
-	f<<"dd\n"<<gradient<<std::endl;
-
 	delta.resize(50);
 	insigmoid = sigmoid_prime(*m_v3_w);
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
-//	delta = gradient.cwiseProduct(insigmoid);
 
-	f<<"ff\n"<<delta<<std::endl;
-	f<<"cg2\n"<<insigmoid<<std::endl;
-	
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v2_a->rows(); k++){
-			(*m_gradient_w3)(j,k) = delta(j) * (*m_v2_a)(k);
+			if((*m_v2_a)(k) != 0 && delta(j) !=0)
+				(*m_gradient_w3)(j,k) += (delta(j) * (*m_v2_a)(k)) / batchsize;
 		}
 	}
-
-	//log the gradient to keep data within safe bounds
-//	for(int aa=0;aa<delta.rows();aa++)
-//		delta(aa) = log(delta(aa));
 
 	//backprop through 500 neuron layer
 	gradient.resize(1000);
 	insigmoid.resize(1000);
 	tps = m_w3->transpose();
 	gradient = tps * delta;
-
-	f<<"gg\n"<<tps<<std::endl;
-	f<<"hh\n"<<gradient<<std::endl;
-
 	delta.resize(1000);
 	insigmoid = sigmoid_prime(*m_v2_w);
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
-//	delta = gradient.cwiseProduct(insigmoid);
-
-	f<<"ii\n"<<delta<<std::endl;
-	f<<"cg3\n"<<insigmoid<<std::endl;
 
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_v1_a->rows(); k++){
-			(*m_gradient_w2)(j,k) = delta(j) * (*m_v1_a)(k);
-
-//			f<<std::setw(11)<<delta(j)<<"|"<<(*m_v2_a)(k)<<std::endl;
+			if((*m_v1_a)(k) != 0 && delta(j) !=0)
+				(*m_gradient_w2)(j,k) += (delta(j) * (*m_v1_a)(k)) / batchsize;
 		}
 	}
-
-	//log the gradient to keep data within safe bounds
-//	for(int aa=0;aa<delta.rows();aa++)
-//		delta(aa) = log(delta(aa));
 	
 	//backprop through 10 neuron layer
 	gradient.resize(500);
 	insigmoid.resize(500);
 	tps = m_w2->transpose();
 	gradient = tps * delta;
-
-	f<<"jj\n"<<tps<<std::endl;
-	f<<"kk\n"<<gradient<<std::endl;
-
 	delta.resize(500);
 	insigmoid = sigmoid_prime(*m_v1_w);
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
-//	delta = gradient.cwiseProduct(insigmoid);
-
-	f<<"ll\n"<<delta<<std::endl;
-	f<<"cg4\n"<<insigmoid<<std::endl;
-
+	
 	for(int j = 0; j < delta.rows(); j++){
 		for(int k = 0; k < m_inputVec->rows(); k++){
-			(*m_gradient_w1)(j,k) = delta(j) * (*m_inputVec)(k);
+			if((*m_inputVec)(k) != 0 && delta(j) !=0)
+				(*m_gradient_w1)(j,k) += (delta(j) * (*m_inputVec)(k)) / batchsize;
 		}
 	}
 
@@ -336,22 +298,21 @@ int neural_backbone::p_backprop(int lbl){
 //	  (passed in) times the step size, to the current 
 //	  matrixes of weights
 //////////////////////////////////////////////////////////
-int neural_backbone::p_updateWeights(Eigen::MatrixXd** gradDec){
+int neural_backbone::p_updateWeights(void){
 
-	std::ofstream f;
-	f.open("debug_update.txt");
+//	std::ofstream f;
+//	f.open("debug_update.txt");
+	
+	*m_w1 = *m_w1 - (*m_gradient_w1 * m_step_size);
+	*m_w2 = *m_w2 - (*m_gradient_w2 * m_step_size);
+	*m_w3 = *m_w3 - (*m_gradient_w3 * m_step_size);
+	*m_o_w4 = *m_o_w4 - (*m_gradient_w4 * m_step_size);
 
-	f<<"Step size = "<<m_step_size;
-	f<<"\nUpdate w1 info\nm_w1="<<m_w1<<std::endl;
-	f<<"*m_w1\n"<<*m_w1<<std::endl;
-	f<<"gradDec[0]="<<gradDec[0]<<std::endl;
-	f<<"*gradDec[0]\n"<<*gradDec[0]<<std::endl;
-	f<<"(*gradDec[0]) * m_step_size"<<(*gradDec[0]) * m_step_size<<std::endl;
-	f<<"*m_w1 + ((*gradDec[0]) * m_step_size)\n"<<*m_w1 + ((*gradDec[0]) * m_step_size)<<std::endl;
-	*m_w1 = *m_w1 + ((*gradDec[0]) * m_step_size);
-	*m_w2 = *m_w2 + ((*gradDec[1]) * m_step_size);
-	*m_w3 = *m_w3 + ((*gradDec[2]) * m_step_size);
-	*m_o_w4 = *m_o_w4 + ((*gradDec[3]) * m_step_size);
+	m_gradient_w1->resize(500,784);
+	m_gradient_w2->resize(1000,500);
+	m_gradient_w3->resize(50,1000);
+	m_gradient_w4->resize(10,50);
+	
 	return(0);
 }
 
@@ -377,7 +338,7 @@ Eigen::MatrixXd** neural_backbone::p_getWeights(void){
 int neural_backbone::p_runNetwork(void){
 
 	int output = -1;
-	int biggest = 0;
+	double biggest = 0;
 
 	//run network
 	p_l1Pass();	
@@ -385,15 +346,23 @@ int neural_backbone::p_runNetwork(void){
 	p_l3Pass();	
 	p_l4Pass();	
 	p_softmax();
+	
+	std::cout<<"outvec comp = [";
 
 	for(int i = 0; i < 10; i++){
-		if((*m_outVec)(i) > biggest){
+
+		std::cout<<"|"<<(*m_outVec)(i)<<"|";
+
+		if(((*m_outVec)(i)) > biggest){
+			std::cout<<i<<"^";
 			biggest = (*m_outVec)(i);
 			output = i;
-		}else if((*m_outVec)(i) == biggest){
-			//std::cout<<"EXCEPTION:tied guess between "<<output<<" and "<<i<<"\n";
 		}
 	}
+	
+	std::cout<<"]\n";
+	std::cout<<" opt="<<output<<std::endl;
+
 	return(output);
 }
 

@@ -9,7 +9,7 @@
 *				
 *
 *	Author		: Adam Loo
-*	Last Edited	: Tue June 6 2017
+*	Last Edited	: Thu June 7 2017
 *
 ****************************************************************/
 
@@ -71,10 +71,6 @@ int neural_controller::train(void){
 	Eigen::MatrixXd* w4;
 	Eigen::MatrixXd** endWeights = new Eigen::MatrixXd*[4];
 	
-	//array of gradient matrices and temp gradients 
-	Eigen::MatrixXd** gradients = new Eigen::MatrixXd*[4];
-	Eigen::MatrixXd** tmpgrad = new Eigen::MatrixXd*[4];
-
 	//matrix of image vectors and vector of lables
 	Eigen::MatrixXd* tmpMx = m_training_block->getImgI();
 	Eigen::VectorXi* lblVecs = m_training_block->getLblI();
@@ -83,26 +79,18 @@ int neural_controller::train(void){
 	imgVecs = tmpMx->cast<int>();
 
 	//manip varbs
-	int num_imgs=1; //tmpMx->cols();
+	int num_imgs=100; //tmpMx->cols();
 	int batchIdx=0;
 	
 	//file reader object
 	file_io f; 
-
-	//initialize array of matrices
-	gradients[0] = new Eigen::MatrixXd;
-	gradients[1] = new Eigen::MatrixXd;
-	gradients[2] = new Eigen::MatrixXd;
-	gradients[3] = new Eigen::MatrixXd;
-	gradients[0]->resize(500,784);
-	gradients[1]->resize(1000,500);
-	gradients[2]->resize(50,1000);
-	gradients[3]->resize(10,50);
+//	std::ofstream dbg;
+//	dbg.open("debug_trainalg.txt");
 		
 	//generate weights
 	if(f.file_exists(m_fh)){
 		std::cout<<"WEIGHTS: reading in from file ["<<m_fh<<"]\n";
-		if(f.readWeights(&w1,&w2,&w3,&w4, m_fh)){
+		if(f.readWeights(&w1,&w2,&w3,&w4,m_fh)){
 			std::cout<<"ERROR: failure to read weights from file ["<<m_fh<<"]\n";
 			return(1);
 		}
@@ -146,19 +134,15 @@ int neural_controller::train(void){
 				std::cout<<"NETWORK [input] : forward pass img ["<<mnIdx+1<<"] with label <"<<(*lblVecs)(mnIdx)<<">\n";
 				//pass through network
 				std::cout<<"NETWORK [output]: evaluated to ["<<p_runNetwork()<<"]\n";
-
-				int slaw = (*lblVecs)(mnIdx);
+				
+//				p_runNetwork();
+				
 				//backpropogate with label value
-				if(p_backprop(slaw)){
+				if(p_backprop((*lblVecs)(mnIdx),m_batchSize)){
 					std::cout<<"ERROR: failure at backpropogation step\n";
 					return(1);
 				}
 					
-				//add gradients to our array of matrices
-				tmpgrad = p_getGradients();
-				for(int i=0; i<4; i++){
-					*gradients[i] += *tmpgrad[i];
-				}
 				//increment index pointer
 				mnIdx++;
 			}
@@ -167,9 +151,7 @@ int neural_controller::train(void){
 			std::cout<<"NETWORK: batch ["<<batchIdx<<"] complete || updating weights\n";
 
 			//average gradients and apply to weights
-			for(int i=0; i<4; i++)
-				*gradients[i] /= m_batchSize;
-			if(p_updateWeights(gradients)){
+			if(p_updateWeights()){
 				std::cout<<"ERROR: weight update unsuccessfull\n";
 				return(1);
 			}
@@ -197,26 +179,19 @@ int neural_controller::train(void){
 				p_softmax();
 		
 				//backpropogate with label value
-				if(p_backprop((*lblVecs)(mnIdx))){
+				if(p_backprop((*lblVecs)(mnIdx), numLeft)){
 						std::cout<<"ERROR: failure at backpropogation step\n";
 						return(1);
 				}
-
-				//add gradients to our array of matrices
-				tmpgrad = p_getGradients();
-				for(int i=0; i<4; i++)
-						*gradients[i] += *tmpgrad[i];
 
 				//increment index pointer
 				mnIdx++;
 			
 			}
 		}
-	
+		
 		//apply update to network weights
-		for(int i=0; i<4; i++)
-			*gradients[i] /= numLeft;
-		if(p_updateWeights(gradients)){
+		if(p_updateWeights()){
 			std::cout<<"ERROR: weight update unsuccessfull\n";
 			return(1);
 		}
@@ -224,14 +199,17 @@ int neural_controller::train(void){
 	
 	//write matrices to m_fh using the f file reader
 	endWeights = p_getWeights();
+
+//	dbg<<"endwrite\n"<<*endWeights[0]<<std::endl;
+
 	if(f.writeWeights(endWeights[0],endWeights[1],endWeights[2],endWeights[3],m_fh)){
 		std::cout<<"ERROR: failure to write weights to ["<<m_fh<<"]\n";
 		return(1);
 	}
 	
 	std::cout<<"SUCCESS: Trained weights written to ["<<m_fh<<"]\n";
-	std::cout<<"		 epochs     = "<<m_numEpoch<<"\n";
-	std::cout<<"		 batch size = "<<m_batchSize<<"\n";
+	std::cout<<" epochs     = "<<m_numEpoch<<"\n";
+	std::cout<<" batch size = "<<m_batchSize<<"\n";
 	
 	return(0);
 }
@@ -326,6 +304,23 @@ int neural_controller::test(void){
 }
 
 /////////////////////////////////////////////////////////////
+//Full send
+//	- same as train but runs a test set between each epoch
+/////////////////////////////////////////////////////////////
+int neural_controller::fullSend(void){
+	
+	int holder = m_numEpoch;
+	m_numEpoch = 1;
+
+	for(int i=0; i < holder; i++){
+		train();
+		test();
+	}
+
+	return(0);
+}
+
+/////////////////////////////////////////////////////////////
 //unit test to see intermediate values in a single forward
 //pass operation
 /////////////////////////////////////////////////////////////
@@ -336,6 +331,7 @@ int neural_controller::unit_fpv(std::string wdat){
 	Eigen::VectorXi*  v = m_training_block->getLblI();
 	Eigen::VectorXi   in(784);
 	Eigen::VectorXd** vec = new Eigen::VectorXd*[9];
+	
 	//weights
 	Eigen::MatrixXd* w1; 
 	Eigen::MatrixXd* w2;
