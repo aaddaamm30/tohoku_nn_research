@@ -79,7 +79,7 @@ int neural_controller::train(void){
 	imgVecs = tmpMx->cast<int>();
 
 	//manip varbs
-	int num_imgs=100; //tmpMx->cols();
+	int num_imgs=tmpMx->cols();
 	int batchIdx=0;
 	
 	//file reader object
@@ -131,11 +131,11 @@ int neural_controller::train(void){
 					return(1);
 				}
 				
-				std::cout<<"NETWORK [input] : forward pass img ["<<mnIdx+1<<"] with label <"<<(*lblVecs)(mnIdx)<<">\n";
+//				std::cout<<"NETWORK [input] : forward pass img ["<<mnIdx+1<<"] with label <"<<(*lblVecs)(mnIdx)<<">\n";
 				//pass through network
-				std::cout<<"NETWORK [output]: evaluated to ["<<p_runNetwork()<<"]\n";
+//				std::cout<<"NETWORK [output]: evaluated to ["<<p_runNetwork()<<"]\n";
 				
-//				p_runNetwork();
+				p_runNetwork();
 				
 				//backpropogate with label value
 				if(p_backprop((*lblVecs)(mnIdx),m_batchSize)){

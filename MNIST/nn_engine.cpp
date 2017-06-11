@@ -347,21 +347,13 @@ int neural_backbone::p_runNetwork(void){
 	p_l4Pass();	
 	p_softmax();
 	
-	std::cout<<"outvec comp = [";
 
 	for(int i = 0; i < 10; i++){
-
-		std::cout<<"|"<<(*m_outVec)(i)<<"|";
-
 		if(((*m_outVec)(i)) > biggest){
-			std::cout<<i<<"^";
 			biggest = (*m_outVec)(i);
 			output = i;
 		}
 	}
-	
-	std::cout<<"]\n";
-	std::cout<<" opt="<<output<<std::endl;
 
 	return(output);
 }
