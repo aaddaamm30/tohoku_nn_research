@@ -68,8 +68,8 @@ int neural_controller::train(void){
 	Eigen::MatrixXd* w1;
 	Eigen::MatrixXd* w2;
 	Eigen::MatrixXd* w3;
-	Eigen::MatrixXd* w4;
-	Eigen::MatrixXd** endWeights = new Eigen::MatrixXd*[4];
+//	Eigen::MatrixXd* w4;
+	Eigen::MatrixXd** endWeights = new Eigen::MatrixXd*[3];
 	
 	//matrix of image vectors and vector of lables
 	Eigen::MatrixXd* tmpMx = m_training_block->getImgI();
@@ -90,13 +90,13 @@ int neural_controller::train(void){
 	//generate weights
 	if(f.file_exists(m_fh)){
 		std::cout<<"WEIGHTS: reading in from file ["<<m_fh<<"]\n";
-		if(f.readWeights(&w1,&w2,&w3,&w4,m_fh)){
+		if(f.readWeights(&w1,&w2,&w3,/*&w4,*/m_fh)){
 			std::cout<<"ERROR: failure to read weights from file ["<<m_fh<<"]\n";
 			return(1);
 		}
 	}else{
 		std::cout<<"WEIGHTS: initializing to random\n";
-		if(f.randomizeWeights(&w1, &w2, &w3, &w4)){
+		if(f.randomizeWeights(&w1, &w2, &w3/*, &w4*/)){
 			std::cout<<"ERROR: failure to randomize weights\n";
 			return(1);
 		}
@@ -104,7 +104,7 @@ int neural_controller::train(void){
 	
 	std::cout<<"WEIGHTS: writing into network\n";
 	//write weights
-	if(p_setMatrixWeights(w1, w2, w3, w4)){
+	if(p_setMatrixWeights(w1, w2, w3/*, w4*/)){
 		std::cout<<"ERROR: failure to set weights in network\n";
 		return(1);
 	}
@@ -175,7 +175,7 @@ int neural_controller::train(void){
 				p_l1Pass();
 				p_l2Pass();
 				p_l3Pass();
-				p_l4Pass();
+//				p_l4Pass();
 				p_softmax();
 		
 				//backpropogate with label value
@@ -202,7 +202,7 @@ int neural_controller::train(void){
 
 //	dbg<<"endwrite\n"<<*endWeights[0]<<std::endl;
 
-	if(f.writeWeights(endWeights[0],endWeights[1],endWeights[2],endWeights[3],m_fh)){
+	if(f.writeWeights(endWeights[0],endWeights[1],endWeights[2],/*endWeights[3],*/m_fh)){
 		std::cout<<"ERROR: failure to write weights to ["<<m_fh<<"]\n";
 		return(1);
 	}
@@ -230,7 +230,7 @@ int neural_controller::test(void){
 	Eigen::MatrixXd* w1;
 	Eigen::MatrixXd* w2;
 	Eigen::MatrixXd* w3;
-	Eigen::MatrixXd* w4;
+//	Eigen::MatrixXd* w4;
 	
 	//get data from mnist
 	Eigen::MatrixXd* tmpMx = m_testing_block->getImgI();
@@ -252,21 +252,21 @@ int neural_controller::test(void){
 	//generate weights
 	if(f.file_exists(m_fh)){
 		std::cout<<"WEIGHTS: reading in from file ["<<m_fh<<"]\n";
-		if(f.readWeights(&w1,&w2,&w3,&w4, m_fh)){
+		if(f.readWeights(&w1,&w2,&w3,/*&w4,*/ m_fh)){
 			std::cout<<"ERROR: failure to read weights from file ["<<m_fh<<"]\n";
 			return(1);
 		}
 	}else{
 		std::cout<<"WEIGHTS: reading in from file ["<<m_fh<<"]\n";
 		std::cout<<"FILE-NOT-FOUND\n\nWEIGHTS: initializing to random\n\n";
-		if(f.randomizeWeights(&w1, &w2, &w3, &w4)){
+		if(f.randomizeWeights(&w1, &w2, &w3/*, &w4*/)){
 			std::cout<<"ERROR: failure to randomize weights\n";
 			return(1);
 		}
 	}
 	
 	//write weights
-	if(p_setMatrixWeights(w1, w2, w3, w4)){
+	if(p_setMatrixWeights(w1, w2, w3/*, w4*/)){
 		std::cout<<"ERROR: failure to set weights in network\n";
 		return(1);
 	}
@@ -330,13 +330,13 @@ int neural_controller::unit_fpv(std::string wdat){
 	Eigen::MatrixXd*  s = m_training_block->getImgI();
 	Eigen::VectorXi*  v = m_training_block->getLblI();
 	Eigen::VectorXi   in(784);
-	Eigen::VectorXd** vec = new Eigen::VectorXd*[9];
+	Eigen::VectorXd** vec = new Eigen::VectorXd*[6];
 	
 	//weights
 	Eigen::MatrixXd* w1; 
 	Eigen::MatrixXd* w2;
 	Eigen::MatrixXd* w3;
-	Eigen::MatrixXd* w4;
+//	Eigen::MatrixXd* w4;
 	
 	//select random object
 	int idx = std::rand() % 60000;
@@ -357,17 +357,17 @@ int neural_controller::unit_fpv(std::string wdat){
 	std::cout<<"UNIT: evaluating file name\n";
 	if(f.validateFileName(wdat)){
 		std::cout<<"FILE: file name not valid, randomizing weights\n";
-		f.randomizeWeights(&w1, &w2, &w3, &w4);
+		f.randomizeWeights(&w1, &w2, &w3/*, &w4*/);
 	}else if(f.file_exists(wdat) && (!f.validateFileName(wdat))){
 		std::cout<<"FILE: reading weights from ["<<wdat<<"]\n";
-		f.readWeights(&w1, &w2, &w3, &w4, wdat);
+		f.readWeights(&w1, &w2, &w3, /*&w4,*/ wdat);
 	}else{
 		std::cout<<"FILE: ["<<wdat<<"] not found. randomizing weigths\n";
-		f.randomizeWeights(&w1, &w2, &w3, &w4);
+		f.randomizeWeights(&w1, &w2, &w3/*, &w4*/);
 	}
 	
 	std::cout<<"UNIT: loading up weights into network\n";
-	p_setMatrixWeights(w1, w2, w3, w4);
+	p_setMatrixWeights(w1, w2, w3/*, w4*/);
 	
 	std::cout<<"UNIT: loading up image into network\n";
 	
@@ -397,17 +397,20 @@ int neural_controller::unit_fpv(std::string wdat){
 	for(int i=0;i<vec[2]->rows();i++){
 		unitfile<<std::setw(10)<<(*vec[2])(i)<<"|"<<(*vec[3])(i)<<std::endl;
 	}
-	unitfile<<"\n    m_v3_w|m_v3_a\n";
+	unitfile<<"\n    m_v3_w\n";
 	for(int i=0;i<vec[4]->rows();i++){
-		unitfile<<std::setw(10)<<(*vec[4])(i)<<"|"<<(*vec[5])(i)<<std::endl;
+		unitfile<<std::setw(10)<<(*vec[4])(i)<<std::endl;
 	}
-	unitfile<<"\n    m_v4_w|m_v4_a\n";
+/*	unitfile<<"\n    m_v4_w|m_v4_a\n";
 	for(int i=0;i<vec[6]->rows();i++){
 		unitfile<<std::setw(10)<<(*vec[6])(i)<<"|"<<(*vec[7])(i)<<std::endl;
 	}
+*/
 	unitfile<<"\noutvec\n";
-	for(int i=0;i<vec[8]->rows();i++)
-		unitfile<<(*vec[8])(i)<<", ";
+	for(int i=0;i<vec[5]->rows();i++)
+		unitfile<<(*vec[5])(i)<<", ";
+	
+	unitfile.close();
 	
 	std::cout<<"UNIT: vector values written to ["<<fh<<"]\n";	
 	return(0);

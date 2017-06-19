@@ -12,7 +12,7 @@
 *				  (int) for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu June 1 2017
+*	Last Edited	: Mon Jun 19 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_

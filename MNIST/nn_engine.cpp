@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu June 8 2017
+*	Last Edited	: Mon Jun 19 2017
 *
 ****************************************************************/
 
@@ -46,10 +46,10 @@ neural_backbone::neural_backbone(){
 	m_v1_a->resize(500);
 	m_v2_w->resize(1000);
 	m_v2_a->resize(1000);
-	m_v3_w->resize(50);
-	m_v3_a->resize(50);
-	m_o_v4_w->resize(10);
-	m_o_v4_a->resize(10);
+	m_v3_w->resize(10);
+//	m_v3_a->resize(50);
+//	m_o_v4_w->resize(10);
+//	m_o_v4_a->resize(10);
 	m_outVec->resize(10);
 	m_lblVec->resize(10);
 	
@@ -57,8 +57,8 @@ neural_backbone::neural_backbone(){
 	//decent for each array of weights
 	m_gradient_w1->resize(500,784);
 	m_gradient_w2->resize(1000,500);
-	m_gradient_w3->resize(50,1000);
-	m_gradient_w4->resize(10,50);
+	m_gradient_w3->resize(10,1000);
+//	m_gradient_w4->resize(10,50);
 }
 
 ////////////////////////////////////////////////////////
@@ -66,12 +66,12 @@ neural_backbone::neural_backbone(){
 ////////////////////////////////////////////////////////
 int neural_backbone::p_setMatrixWeights(Eigen::MatrixXd* mx1, 
 									  Eigen::MatrixXd* mx2,
-					 				  Eigen::MatrixXd* mx3,
-					 				  Eigen::MatrixXd* mx4){
+					 				  Eigen::MatrixXd* mx3/*,
+					 				  Eigen::MatrixXd* mx4*/){
 	m_w1 = mx1;
 	m_w2 = mx2;
 	m_w3 = mx3;
-	m_o_w4 = mx4;
+//	m_o_w4 = mx4;
 
 	return(0);
 }
@@ -114,13 +114,15 @@ int neural_backbone::p_l2Pass(void){
 }
 int neural_backbone::p_l3Pass(void){
 	(*m_v3_w) = (*m_w3) * (*m_v2_a);
-	(*m_v3_a) = sigmoid(*m_v3_w);
+	//(*m_v3_a) = sigmoid(*m_v3_w);
 	return(0);
 }
+/*
 int neural_backbone::p_l4Pass(void){
 	(*m_o_v4_w) = (*m_o_w4) * (*m_v3_a);
 	return(0);
 }
+*/
 
 //////////////////////////////////////////////////////////
 //softmax
@@ -132,11 +134,11 @@ int neural_backbone::p_softmax(void){
 	double size = 0;
 
 	for(int j=0; j<10; j++){
-		size += exp((*m_o_v4_w)(j));
+		size += exp((*m_v3_w)(j));
 	}
 	
 	for(int j=0; j<10; j++){
-		(*m_outVec)(j) = exp((*m_o_v4_w)(j)) / size;
+		(*m_outVec)(j) = exp((*m_v3_w)(j)) / size;
 	}
 	
 	return(0);
@@ -150,17 +152,18 @@ int neural_backbone::p_softmax(void){
 //////////////////////////////////////////////////////////
 Eigen::VectorXd** neural_backbone::p_getFPV(void){
 
-	Eigen::VectorXd** FPV = new Eigen::VectorXd*[9];
+	Eigen::VectorXd** FPV = new Eigen::VectorXd*[7];
 
 	FPV[0] = m_v1_w;
 	FPV[1] = m_v1_a;
 	FPV[2] = m_v2_w;
 	FPV[3] = m_v2_a;
 	FPV[4] = m_v3_w;
-	FPV[5] = m_v3_a;
-	FPV[6] = m_o_v4_w;
-	FPV[7] = m_o_v4_a;
-	FPV[8] = m_outVec;
+	FPV[5] = m_outVec;
+//	FPV[5] = m_v3_a;
+//	FPV[6] = m_o_v4_w;
+//	FPV[7] = m_o_v4_a;
+//	FPV[8] = m_outVec;
 	return(FPV);
 }
 
@@ -172,7 +175,7 @@ Eigen::VectorXd** neural_backbone::p_getFPV(void){
 //////////////////////////////////////////////////////////
 Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 	
-	Eigen::MatrixXd** grads = new Eigen::MatrixXd*[4];
+	Eigen::MatrixXd** grads = new Eigen::MatrixXd*[3];
 
 //	std::ofstream f;
 //	f.open("debug_gradients.txt");
@@ -180,7 +183,7 @@ Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 	grads[0] = m_gradient_w1;
 	grads[1] = m_gradient_w2;
 	grads[2] = m_gradient_w3;
-	grads[3] = m_gradient_w4;
+//	grads[3] = m_gradient_w4;
 
 	return(grads);
 }
@@ -216,22 +219,24 @@ int neural_backbone::p_backprop(int lbl, int batchsize){
 	//derivitave or cost
 	gradient = (*m_outVec) - (*m_lblVec);
 	
-	insigmoid = sigmoid_prime(*m_o_v4_w);
+	insigmoid = sigmoid_prime(*m_v3_w);
 
 	//delta is derivitave of error
 	for(int i=0; i<insigmoid.rows(); i++){
 		delta(i) = gradient(i) * insigmoid(i);
 	}
-	
+
+
 	//apply error to each weight in m_gradient_w4
 	//using the input signal as k and delta from j
 	for(int j = 0; j < delta.rows(); j++){
-		for(int k = 0; k < m_v3_a->rows(); k++){
-			if((*m_v3_a)(k) != 0 && delta(j) !=0)
-				(*m_gradient_w4)(j,k) += (delta(j) * (*m_v3_a)(k)) / batchsize;
+		for(int k = 0; k < m_v3_w->rows(); k++){
+			if((*m_v2_a)(k) != 0 && delta(j) !=0)
+				(*m_gradient_w3)(j,k) += (delta(j) * (*m_v2_a)(k)) / batchsize;
 		}
 	}
-	
+
+/*
 	//bckprop through to 1000 neuron layer
 	// resize tmp vectors
 	gradient.resize(50);
@@ -252,6 +257,7 @@ int neural_backbone::p_backprop(int lbl, int batchsize){
 				(*m_gradient_w3)(j,k) += (delta(j) * (*m_v2_a)(k)) / batchsize;
 		}
 	}
+*/
 
 	//backprop through 500 neuron layer
 	gradient.resize(1000);
@@ -306,12 +312,12 @@ int neural_backbone::p_updateWeights(void){
 	*m_w1 = *m_w1 - (*m_gradient_w1 * m_step_size);
 	*m_w2 = *m_w2 - (*m_gradient_w2 * m_step_size);
 	*m_w3 = *m_w3 - (*m_gradient_w3 * m_step_size);
-	*m_o_w4 = *m_o_w4 - (*m_gradient_w4 * m_step_size);
+//	*m_o_w4 = *m_o_w4 - (*m_gradient_w4 * m_step_size);
 
 	m_gradient_w1->resize(500,784);
 	m_gradient_w2->resize(1000,500);
-	m_gradient_w3->resize(50,1000);
-	m_gradient_w4->resize(10,50);
+	m_gradient_w3->resize(10,1000);
+//	m_gradient_w4->resize(10,50);
 	
 	return(0);
 }
@@ -322,11 +328,11 @@ int neural_backbone::p_updateWeights(void){
 //////////////////////////////////////////////////////////
 Eigen::MatrixXd** neural_backbone::p_getWeights(void){
 	
-	Eigen::MatrixXd** bruh = new Eigen::MatrixXd*[4];
+	Eigen::MatrixXd** bruh = new Eigen::MatrixXd*[3];
 	bruh[0] = m_w1;
 	bruh[1] = m_w2;
 	bruh[2] = m_w3;
-	bruh[3] = m_o_w4;
+//	bruh[3] = m_o_w4;
 
 	return(bruh);
 }
@@ -344,7 +350,7 @@ int neural_backbone::p_runNetwork(void){
 	p_l1Pass();	
 	p_l2Pass();	
 	p_l3Pass();	
-	p_l4Pass();	
+//	p_l4Pass();	
 	p_softmax();
 	
 

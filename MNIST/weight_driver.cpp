@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon June 6 2017
+*	Last Edited	: Mon Jun 19 2017
 *
 ****************************************************************/
 
@@ -54,21 +54,25 @@ int file_io::validateFileName(std::string f_name){
 //	
 // - still initializes all to random values between [-.5, .5]
 //	 (this value may be fun to play with in the future)
+//
+// - Commeted out code is for 4 layer network (500, 1000, 50, 10)
+//	 now implementing 3 layer (500, 1000, 10)
 /////////////////////////////////////////////////////////////////////
 int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 							  Eigen::MatrixXd** w2,
-							  Eigen::MatrixXd** w3,
-							  Eigen::MatrixXd** o4){
+							  Eigen::MatrixXd** w3/*,
+							  Eigen::MatrixXd** o4*/){
 
 	*w1 = new Eigen::MatrixXd;
 	*w2 = new Eigen::MatrixXd;
 	*w3 = new Eigen::MatrixXd;
-	*o4 = new Eigen::MatrixXd;
+//	*o4 = new Eigen::MatrixXd;
 
 	(*w1)->resize(500, 784);
 	(*w2)->resize(1000, 500);
-	(*w3)->resize(50, 1000);
-	(*o4)->resize(10, 50);
+	(*w3)->resize(10, 1000);
+//	(*w3)->resize(50, 1000);
+//	(*o4)->resize(10, 50);
 	
 	//randomizing values between -.5 and .5
 	for(int i = 0; i < (*w1)->rows(); i++){
@@ -87,11 +91,13 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 		}
 	}
 
+/*
 	for(int i = 0; i < (*o4)->rows(); i++){
 		for(int j = 0; j < (*o4)->cols(); j++){
-			(**o4)(i,j) = ((((double)std::rand() / RAND_MAX) / 2.0) - .25);
+			(**o4)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
+*/
 
 	return(0);
 }
@@ -102,7 +108,7 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 int file_io::writeWeights(Eigen::MatrixXd* w1,
 						  Eigen::MatrixXd* w2,
 						  Eigen::MatrixXd* w3,
-						  Eigen::MatrixXd* o4,
+						  /*Eigen::MatrixXd* o4,*/
 						  std::string f_name){
 	
 	//first open the file
@@ -162,7 +168,8 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 		//adds line break at end of row
 		weights << "\n";
 	}
-	
+
+/*
 	//output layer matrix values (note different header)
 	weights << "\nOutput Layer\nsize: ";
 	weights << o4->rows();
@@ -179,6 +186,7 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 		//adds line break at end of row
 		weights << "\n";
 	}
+*/
 	
 	weights.close();
 	
@@ -197,13 +205,13 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 int file_io::readWeights(Eigen::MatrixXd** w1,
 						 Eigen::MatrixXd** w2,
 						 Eigen::MatrixXd** w3,
-						 Eigen::MatrixXd** w4,
+						 /*Eigen::MatrixXd** w4,*/
 						 std::string f_name){
 	//create new matrixes
 	*w1 = new Eigen::MatrixXd;
 	*w2 = new Eigen::MatrixXd;
 	*w3 = new Eigen::MatrixXd;
-	*w4 = new Eigen::MatrixXd;
+//	*w4 = new Eigen::MatrixXd;
 
 	char tmp[20];
 	char c;
@@ -366,6 +374,7 @@ int file_io::readWeights(Eigen::MatrixXd** w1,
 		col = boost::lexical_cast<int>(tmp);
 		weights.get(c);	//reader is at first char of first num
 
+/*
 		//resize weights 1 and read in data, ends loop at end of first matrix
 		(*w4)->resize(row, col);
 		for(int n = 0; n < (*w4)->rows(); n++){
@@ -383,6 +392,7 @@ int file_io::readWeights(Eigen::MatrixXd** w1,
 			}
 			weights.get(c);	//moves reader past '\n' char
 		}
+*/
 		weights.close();
 	}
 
@@ -414,13 +424,13 @@ int file_io::run_unit(std::string path){
 	Eigen::MatrixXd* w1=NULL;
 	Eigen::MatrixXd* w2=NULL;
 	Eigen::MatrixXd* w3=NULL;
-	Eigen::MatrixXd* w4=NULL;
+//	Eigen::MatrixXd* w4=NULL;
 	
 	//weights to be read back in
 	Eigen::MatrixXd* iw1=NULL;
 	Eigen::MatrixXd* iw2=NULL;
 	Eigen::MatrixXd* iw3=NULL;
-	Eigen::MatrixXd* iw4=NULL;
+//	Eigen::MatrixXd* iw4=NULL;
 	
 	//resize 0 matrix
 	Eigen::MatrixXd tst;
@@ -437,29 +447,29 @@ int file_io::run_unit(std::string path){
 	std::cout << "SUCCESS: found ["<<path<<"] a valid file name\n";
 	std::cout << "VALUE:   method file_exists("<<path<<") evaluates to ["<<this->file_exists(path)<<"]\n";
 
-	if(this->randomizeWeights(&w1, &w2, &w3, &w4)){
+	if(this->randomizeWeights(&w1, &w2, &w3/*, &w4*/)){
 		std::cout << "FAIL: in randomize weigths method\n";
 		return(1);
 	}
 	
 	std::cout << "SUCCESS: randomized pointers ["<<(std::hex)<<w1<<","
 								 				 <<(std::hex)<<w2<<","
-								 			 	 <<(std::hex)<<w3<<","
-											 	 <<(std::hex)<<w4<<"]\n";
-	if(this->writeWeights(w1, w2, w3, w4, path)){
+								 			 	 <<(std::hex)<<w3<<"]\n";
+//											 	 <<(std::hex)<<w4<<"]\n";
+	if(this->writeWeights(w1, w2, w3, /*w4,*/ path)){
 		std::cout << "FAIL: in write weights method\n";
 		return(1);
 	}
 	std::cout << "SUCCESS: wrote matrix values to ["<<path<<"]\n";
 
-	if(this->readWeights(&iw1, &iw2, &iw3, &iw4, path)){
+	if(this->readWeights(&iw1, &iw2, &iw3, /*&iw4,*/ path)){
 		std::cout << "FAIL: in read weights method\n";
 		return(1);
 	}	
 	std::cout << "SUCCESS: passed through read method\n"
 			  << "printing read values to io_unit.txt\n";
 			
-	if(this->writeWeights(iw1, iw2, iw3, iw4, "io_unit.txt")){
+	if(this->writeWeights(iw1, iw2, iw3, /*iw4,*/ "io_unit.txt")){
 		std::cout << "FAIL: in read weights method\n";
 		return(1);
 	}
