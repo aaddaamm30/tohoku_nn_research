@@ -349,7 +349,8 @@ int file_io::readWeights(Eigen::MatrixXd** w1,
 			}
 			weights.get(c);	//moves reader past '\n' char
 		}
-		
+
+/*		
 		//read in data from last matrix and then close file
 		do{
 			weights.get(c);
@@ -374,7 +375,7 @@ int file_io::readWeights(Eigen::MatrixXd** w1,
 		col = boost::lexical_cast<int>(tmp);
 		weights.get(c);	//reader is at first char of first num
 
-/*
+
 		//resize weights 1 and read in data, ends loop at end of first matrix
 		(*w4)->resize(row, col);
 		for(int n = 0; n < (*w4)->rows(); n++){
