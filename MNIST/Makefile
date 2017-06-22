@@ -12,7 +12,7 @@ P="../eigen3/"
 CC=g++
 CXXFLAGS=-std=c++11 -g -c -Wall -I $P
 LINKARGS=-g
-EXEC=neuralNetwork
+EXEC=run_network
 
 #may need to add libraries
 
@@ -42,7 +42,7 @@ nn_controller.o: nn_controller.cpp nn_controller.h nn_engine.h weight_driver.h r
 
 #clean action
 clean: 
-	rm -f neuralNetwork
+	rm -f run_network
 	rm -f read_mnist.o
 	rm -f nn_driver.o
 	rm -f weight_driver.o

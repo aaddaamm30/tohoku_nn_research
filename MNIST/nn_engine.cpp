@@ -371,7 +371,7 @@ int neural_backbone::p_runNetwork(void){
 //////////////////////////////////////////////////////////
 Eigen::VectorXd ReLU(Eigen::VectorXd avec){
 
-	for(int i = 0;i < avec.rows(); i++){
+	for(int i = 0; i<avec.rows(); i++){
 		if(avec(i) < 0)
 			avec(i) = 0;
 	}

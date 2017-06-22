@@ -42,8 +42,8 @@
 	"		output in the case of training or\n" \
 	"		input in the case of testing the\n" \
 	"		network\n\n" \
-	"NOTE: Network only accepts one operation at\n" \
-	"      a time and will fail otherwise.\n" \
+//	"NOTE: Network only accepts one operation at\n" \
+//	"      a time and will fail otherwise.\n" \
 
 //	"			g - gradient decent math\n" \//
 
