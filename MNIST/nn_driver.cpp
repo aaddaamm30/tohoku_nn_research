@@ -23,13 +23,16 @@
 #define USAGE \
 	"MNIST neural Network --- Tohoku University Research\n" \
 	"Author: Adam Loo\n\n" \
-	"USAGE: run_network [-h] [-u <system>] [-train] [-test] <weights-file>\n" \
+	"USAGE: run_network [-h] [-u <system>] [-fullsend] [-train] [-test] <weights-file>\n" \
 	"	-h ~ display help\n" \
 	"	-u ~ unit test specific part of network\n" \
 	"		<system> options\n" \
 	"			r - mnist reader\n" \
 	"			o - file output creation\n" \
 	"			m - matrix feed forward\n" \
+	"	-fullsend ~ trains and tests printing\n"\
+	"				important info to console\n"\
+	"				no weight file required\n"\
 	"	-train ~ trains network from randomized\n" \
 	"			 weights and makes a file with\n" \
 	"			 trained weights for test input.\n" \
@@ -42,10 +45,6 @@
 	"		output in the case of training or\n" \
 	"		input in the case of testing the\n" \
 	"		network\n\n" \
-//	"NOTE: Network only accepts one operation at\n" \
-//	"      a time and will fail otherwise.\n" \
-
-//	"			g - gradient decent math\n" \//
 
 //prototypes
 
@@ -193,7 +192,11 @@ int main(int argc, char **argv){
 			return(0);
 	
 	}
-	
+
+	if((std::string)argv[1] == "-fullsend"){
+		nc.fullSend();
+		return(0);
+	}
 	//invalid input
 	std::cout << "ERROR: invalid command line argments (use [-h] for help)" << std::endl << std::endl;
 	return(1);

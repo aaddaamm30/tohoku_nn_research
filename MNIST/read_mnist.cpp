@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Mon Jun 19 2017
+*	Last Edited	: Thu Jun 22 2017
 *
 ****************************************************************/
 
@@ -17,6 +17,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
+#include <time.h>
 #include "read_mnist.h"
 
 
@@ -217,6 +218,9 @@ int mnist_block::run_unit(void){
 	//get working vectors and matrixes
 	Eigen::MatrixXd* image = getImgI();
 	Eigen::VectorXi* label = getLblI();
+	
+	//get true randomness
+	std::srand(time(NULL));
 	
 	int stella = std::rand() % image->cols();
 	std::cout << "\n====================================";

@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon Jun 19 2017
+*	Last Edited	: Thu Jun 22 2017
 *
 ****************************************************************/
 
@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <boost/lexical_cast.hpp>
 #include <stdlib.h>
+#include <time.h>
 #include "weight_driver.h"
 
 /////////////////////////////////////////////////////////////////////
@@ -73,6 +74,9 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 	(*w3)->resize(10, 1000);
 //	(*w3)->resize(50, 1000);
 //	(*o4)->resize(10, 50);
+
+	//truely randomize
+	std::srand(time(NULL));
 	
 	//randomizing values between -.5 and .5
 	for(int i = 0; i < (*w1)->rows(); i++){

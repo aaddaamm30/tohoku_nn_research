@@ -32,6 +32,7 @@ Eigen::VectorXd ReLU(Eigen::VectorXd);
 Eigen::VectorXd ReLU_prime(Eigen::VectorXd);
 Eigen::VectorXd sigmoid(Eigen::VectorXd);
 Eigen::VectorXd sigmoid_prime(Eigen::VectorXd);
+double f_exp(double);
 
 ////////////////////////////////////////////////////////
 //constructor
@@ -134,11 +135,11 @@ int neural_backbone::p_softmax(void){
 	double size = 0;
 
 	for(int j=0; j<10; j++){
-		size += exp((*m_v3_w)(j));
+		size += f_exp((*m_v3_w)(j));
 	}
 	
 	for(int j=0; j<10; j++){
-		(*m_outVec)(j) = exp((*m_v3_w)(j)) / size;
+		(*m_outVec)(j) = f_exp((*m_v3_w)(j)) / size;
 	}
 	
 	return(0);
@@ -374,6 +375,8 @@ Eigen::VectorXd ReLU(Eigen::VectorXd avec){
 	for(int i = 0; i<avec.rows(); i++){
 		if(avec(i) < 0)
 			avec(i) = 0;
+		if(avec(i) > 1)
+			avec(i) = 1;
 	}
 
 	return(avec);
@@ -402,14 +405,14 @@ Eigen::VectorXd ReLU_prime(Eigen::VectorXd avec){
 //////////////////////////////////////////////////////////
 Eigen::VectorXd sigmoid(Eigen::VectorXd in){
 	
-	Eigen::VectorXd cig;
-	cig.resize(in.rows());
+	Eigen::VectorXd sig;
+	sig.resize(in.rows());
 	
 	for(int i=0; i<in.rows(); i++){
-		cig(i) = 1/(1+exp(-in(i)));
+		sig(i) = 1/(1+f_exp(-in(i)));
 	}
 
-	return(cig);
+	return(sig);
 }
 
 //////////////////////////////////////////////////////////
@@ -419,14 +422,37 @@ Eigen::VectorXd sigmoid(Eigen::VectorXd in){
 //////////////////////////////////////////////////////////
 Eigen::VectorXd sigmoid_prime(Eigen::VectorXd in){
 
-	Eigen::VectorXd cigp;
-	cigp.resize(in.rows());
-	double cig;
+	Eigen::VectorXd sigp;
+	sigp.resize(in.rows());
+	double sig;
 
 	for(int i=0; i<in.rows(); i++){
-		cig = 1/(1+exp(-in(i)));
-		cigp(i) = cig * (1 - cig);
+		sig = 1/(1+f_exp(-in(i)));
+		sigp(i) = sig * (1 - sig);
 	}
 
-	return(cigp);
+	return(sigp);
+}
+
+//////////////////////////////////////////////////////////
+//fast e^x exp function
+// - improve speed for activation function by not using
+//	 exp function
+//////////////////////////////////////////////////////////
+double f_exp(double x){
+
+	x = 1.0 + (x/256.0);
+
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+	x *= x;
+
+	return(x);
 }

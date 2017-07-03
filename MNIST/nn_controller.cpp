@@ -84,8 +84,6 @@ int neural_controller::train(void){
 	
 	//file reader object
 	file_io f; 
-//	std::ofstream dbg;
-//	dbg.open("debug_trainalg.txt");
 		
 	//generate weights
 	if(f.file_exists(m_fh)){
@@ -308,13 +306,132 @@ int neural_controller::test(void){
 //	- same as train but runs a test set between each epoch
 /////////////////////////////////////////////////////////////
 int neural_controller::fullSend(void){
-	
-	int holder = m_numEpoch;
-	m_numEpoch = 1;
 
-	for(int i=0; i < holder; i++){
-		train();
-		test();
+	//get user input
+	int epoch, batch, mnIdx, net_guess, num_correct=0;
+	double step;
+
+	std::cout<<"\nFULL SEND BRUH\n";
+	std::cout<<"Epoch : ";
+	std::cin>>epoch;
+	std::cout<<"\nBatch : ";
+	std::cin>>batch;
+	std::cout<<"\nstep  : ";
+	std::cin>>step;
+
+	if(epoch<=0||batch<=0||step <=0){
+		std::cout<<"\n\n||INVALID INPUT||\n";
+		return(1);
+	}
+
+	file_io f;
+	m_numEpoch = 1;
+	m_batchSize = batch;
+	p_setStepSize(step);
+
+	//load up info (will be a lot :O)
+	//testing below
+	Eigen::MatrixXd* tmpMx = m_testing_block->getImgI();
+	Eigen::VectorXi* TEST_lbl = m_testing_block->getLblI();
+	Eigen::MatrixXi TEST_img(tmpMx->rows(),tmpMx->cols());
+	TEST_img = tmpMx->cast<int>();
+	//training below
+	tmpMx = m_training_block->getImgI();
+	Eigen::VectorXi* TRAIN_lbl = m_training_block->getLblI();
+	Eigen::MatrixXi TRAIN_img(tmpMx->rows(),tmpMx->cols());
+	TRAIN_img = tmpMx->cast<int>();
+
+	//init vector for one img
+	Eigen::VectorXi INIT_img(tmpMx->rows());
+
+	//randomize that $H!T
+	Eigen::MatrixXd* w1;
+	Eigen::MatrixXd* w2;
+	Eigen::MatrixXd* w3;
+
+	if(f.randomizeWeights(&w1, &w2, &w3/*, &w4*/)){
+		std::cout<<"ERROR: failure to randomize weights\n";
+		return(1);
+	}
+	std::cout<<"WEIGHTS: writing into network\n";
+	//write weights
+	if(p_setMatrixWeights(w1, w2, w3/*, w4*/)){
+		std::cout<<"ERROR: failure to set weights in network\n";
+		return(1);
+	}
+	
+	
+	//top level loop to run through all processes
+	for(int loopnum = 0; loopnum < epoch; loopnum++){
+		
+		std::cout<<"\nEPOCH TRAIN #"<<loopnum+1<<std::endl;
+		//reset index to beginning of training set
+		mnIdx = 0;	
+		
+		//run test batch number of times while there are still at least
+		//batch number input vectors left
+		while((TRAIN_img.cols() - mnIdx) >= m_batchSize){
+			for(int m=0; m<m_batchSize; m++){
+
+				//enter img vector				
+				for(int l=0; l<784; l++){
+					INIT_img(l) = TRAIN_img(l, mnIdx);	
+				}
+				if(p_setInputVector(&INIT_img)){
+					std::cout<<"ERROR: fail to set image input vector in network\n";
+					return(1);
+				}
+				
+				p_runNetwork();
+				
+				//backpropogate with label value
+				if(p_backprop((*TRAIN_lbl)(mnIdx),m_batchSize)){
+					std::cout<<"ERROR: failure at backpropogation step\n";
+					return(1);
+				}
+					
+				//increment index pointer
+				mnIdx++;
+			}
+
+			//average gradients and apply to weights
+			if(p_updateWeights()){
+				std::cout<<"ERROR: weight update unsuccessfull\n";
+				return(1);
+			}
+		}
+
+		
+		std::cout<<"COMPLETE -> TESTING\n";
+		
+		//one test output a accuracy to console
+		mnIdx = 0;
+		num_correct = 0;	
+		//loop though all test imgs and labels and output accuracy
+		for(int i=0;i<TEST_img.cols();i++){
+		
+			for(int l=0; l<TEST_img.rows(); l++){
+				INIT_img(l) = TEST_img(l,i);	
+			}
+				
+			if(p_setInputVector(&INIT_img)){
+					std::cout<<"ERROR: fail to set image input vector in network\n";
+					return(1);
+			}
+			
+			//get network guess
+			net_guess = p_runNetwork();
+			
+			//itterate if correct
+			if(net_guess == (*TEST_lbl)(i)){
+				num_correct++;
+			}
+		}
+	
+		std::cout<<"TEST COMPLETE\n";
+		std::cout<<"Number correct   = "<<num_correct<<std::endl;
+		std::cout<<"Accuracy         = "<<((double)num_correct / TEST_img.cols())*100<<"%\n";
+
 	}
 
 	return(0);
