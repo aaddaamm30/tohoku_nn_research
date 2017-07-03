@@ -1,0 +1,29 @@
+FPGA TIME 
+small scale fpga mnist implementation 
+takes 5x5 matrix of binary foreground
+background images and classifies them. 
+
+7/3/2017
+all ip modules have been created. 
+activation and activation prime created.
+linear feedback shift register tested
+and confirmed. sigmoid and sigmoid prime
+tested and confirmed. 
+
+Tomorrow overarching design for states 
+will be completed. Ultimately it will be 
+just a complex state machine. Shoutout
+dj turing. 
+
+modified the c++ mnist classifier to both
+run train and test inbetween epochs for 
+better data gathering. Code updated in
+github so parallel test can be run from
+my home pc and work pc. Hopefully will
+be able to have multiple learning curve and
+learning maxout graphs for at least three
+different batch sizes and three different 
+step values and potentially add in a different
+activation function for fun. (ReLU with 
+saturation?). 
+
