@@ -135,11 +135,11 @@ int neural_backbone::p_softmax(void){
 	double size = 0;
 
 	for(int j=0; j<10; j++){
-		size += f_exp((*m_v3_w)(j));
+		size += exp((*m_v3_w)(j));
 	}
 	
 	for(int j=0; j<10; j++){
-		(*m_outVec)(j) = f_exp((*m_v3_w)(j)) / size;
+		(*m_outVec)(j) = exp((*m_v3_w)(j)) / size;
 	}
 	
 	return(0);
@@ -409,7 +409,7 @@ Eigen::VectorXd sigmoid(Eigen::VectorXd in){
 	sig.resize(in.rows());
 	
 	for(int i=0; i<in.rows(); i++){
-		sig(i) = 1/(1+f_exp(-in(i)));
+		sig(i) = 1/(1+exp(-in(i)));
 	}
 
 	return(sig);
@@ -427,7 +427,7 @@ Eigen::VectorXd sigmoid_prime(Eigen::VectorXd in){
 	double sig;
 
 	for(int i=0; i<in.rows(); i++){
-		sig = 1/(1+f_exp(-in(i)));
+		sig = 1/(1+exp(-in(i)));
 		sigp(i) = sig * (1 - sig);
 	}
 
