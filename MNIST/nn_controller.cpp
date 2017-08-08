@@ -9,7 +9,7 @@
 *				
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu June 7 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 
@@ -65,14 +65,14 @@ int neural_controller::train(void){
 	int mnIdx = 0;
 	
 	//weight matrices 
-	Eigen::MatrixXd* w1;
-	Eigen::MatrixXd* w2;
-	Eigen::MatrixXd* w3;
-//	Eigen::MatrixXd* w4;
-	Eigen::MatrixXd** endWeights = new Eigen::MatrixXd*[3];
+	Eigen::MatrixXf* w1;
+	Eigen::MatrixXf* w2;
+	Eigen::MatrixXf* w3;
+//	Eigen::MatrixXf* w4;
+	Eigen::MatrixXf** endWeights = new Eigen::MatrixXf*[3];
 	
 	//matrix of image vectors and vector of lables
-	Eigen::MatrixXd* tmpMx = m_training_block->getImgI();
+	Eigen::MatrixXf* tmpMx = m_training_block->getImgI();
 	Eigen::VectorXi* lblVecs = m_training_block->getLblI();
 	Eigen::MatrixXi imgVecs(tmpMx->rows(),tmpMx->cols());
 	Eigen::VectorXi oneImg(784);
@@ -225,13 +225,13 @@ int neural_controller::test(void){
 	file_io f;
 
 	//load up weights
-	Eigen::MatrixXd* w1;
-	Eigen::MatrixXd* w2;
-	Eigen::MatrixXd* w3;
-//	Eigen::MatrixXd* w4;
+	Eigen::MatrixXf* w1;
+	Eigen::MatrixXf* w2;
+	Eigen::MatrixXf* w3;
+//	Eigen::MatrixXf* w4;
 	
 	//get data from mnist
-	Eigen::MatrixXd* tmpMx = m_testing_block->getImgI();
+	Eigen::MatrixXf* tmpMx = m_testing_block->getImgI();
 	Eigen::VectorXi* lblVecs = m_testing_block->getLblI();
 	Eigen::MatrixXi imgVecs(tmpMx->rows(),tmpMx->cols());
 	Eigen::VectorXi inImg(tmpMx->rows());
@@ -296,7 +296,7 @@ int neural_controller::test(void){
 	std::cout<<"TEST COMPLETE\n";
 	std::cout<<"Number of trials = "<<num_imgs<<std::endl;
 	std::cout<<"Number correct   = "<<num_correct<<std::endl;
-	std::cout<<"Accuracy         = "<<((double)num_correct / num_imgs)*100<<"%\n";
+	std::cout<<"Accuracy         = "<<((float)num_correct / num_imgs)*100<<"%\n";
 
 	return(0);
 }
@@ -309,7 +309,7 @@ int neural_controller::fullSend(void){
 
 	//get user input
 	int epoch, batch, mnIdx, net_guess, num_correct=0;
-	double step;
+	float step;
 
 	std::cout<<"\nFULL SEND BRUH\n";
 	std::cout<<"Epoch : ";
@@ -331,7 +331,7 @@ int neural_controller::fullSend(void){
 
 	//load up info (will be a lot :O)
 	//testing below
-	Eigen::MatrixXd* tmpMx = m_testing_block->getImgI();
+	Eigen::MatrixXf* tmpMx = m_testing_block->getImgI();
 	Eigen::VectorXi* TEST_lbl = m_testing_block->getLblI();
 	Eigen::MatrixXi TEST_img(tmpMx->rows(),tmpMx->cols());
 	TEST_img = tmpMx->cast<int>();
@@ -345,9 +345,9 @@ int neural_controller::fullSend(void){
 	Eigen::VectorXi INIT_img(tmpMx->rows());
 
 	//randomize that $H!T
-	Eigen::MatrixXd* w1;
-	Eigen::MatrixXd* w2;
-	Eigen::MatrixXd* w3;
+	Eigen::MatrixXf* w1;
+	Eigen::MatrixXf* w2;
+	Eigen::MatrixXf* w3;
 
 	if(f.randomizeWeights(&w1, &w2, &w3/*, &w4*/)){
 		std::cout<<"ERROR: failure to randomize weights\n";
@@ -430,7 +430,7 @@ int neural_controller::fullSend(void){
 	
 		std::cout<<"TEST COMPLETE\n";
 		std::cout<<"Number correct   = "<<num_correct<<std::endl;
-		std::cout<<"Accuracy         = "<<((double)num_correct / TEST_img.cols())*100<<"%\n";
+		std::cout<<"Accuracy         = "<<((float)num_correct / TEST_img.cols())*100<<"%\n";
 
 	}
 
@@ -444,16 +444,16 @@ int neural_controller::fullSend(void){
 int neural_controller::unit_fpv(std::string wdat){
 
 	//get data
-	Eigen::MatrixXd*  s = m_training_block->getImgI();
+	Eigen::MatrixXf*  s = m_training_block->getImgI();
 	Eigen::VectorXi*  v = m_training_block->getLblI();
 	Eigen::VectorXi   in(784);
-	Eigen::VectorXd** vec = new Eigen::VectorXd*[6];
+	Eigen::VectorXf** vec = new Eigen::VectorXf*[6];
 	
 	//weights
-	Eigen::MatrixXd* w1; 
-	Eigen::MatrixXd* w2;
-	Eigen::MatrixXd* w3;
-//	Eigen::MatrixXd* w4;
+	Eigen::MatrixXf* w1; 
+	Eigen::MatrixXf* w2;
+	Eigen::MatrixXf* w3;
+//	Eigen::MatrixXf* w4;
 	
 	//select random object
 	int idx = std::rand() % 60000;

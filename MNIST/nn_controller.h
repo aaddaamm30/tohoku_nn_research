@@ -9,7 +9,7 @@
 *				  neural_backbone class
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon June 5 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_CONTROLLER_
@@ -56,7 +56,7 @@ class neural_controller : public neural_backbone{
 		int m_batchSize = 100;
 	
 		//matrices to help remeber weights and find averages
-		Eigen::MatrixXd** m_updateGradients;
+		Eigen::MatrixXf** m_updateGradients;
 
 		//path string for weight writing and reading
 		std::string m_fh;

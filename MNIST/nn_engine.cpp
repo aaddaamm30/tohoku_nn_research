@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon Jun 19 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 
@@ -28,11 +28,11 @@
 #include "nn_engine.h"
 
 //prototypes
-Eigen::VectorXd ReLU(Eigen::VectorXd);
-Eigen::VectorXd ReLU_prime(Eigen::VectorXd);
-Eigen::VectorXd sigmoid(Eigen::VectorXd);
-Eigen::VectorXd sigmoid_prime(Eigen::VectorXd);
-double f_exp(double);
+Eigen::VectorXf ReLU(Eigen::VectorXf);
+Eigen::VectorXf ReLU_prime(Eigen::VectorXf);
+Eigen::VectorXf sigmoid(Eigen::VectorXf);
+Eigen::VectorXf sigmoid_prime(Eigen::VectorXf);
+float f_exp(float);
 
 ////////////////////////////////////////////////////////
 //constructor
@@ -65,10 +65,10 @@ neural_backbone::neural_backbone(){
 ////////////////////////////////////////////////////////
 //matrix set weights
 ////////////////////////////////////////////////////////
-int neural_backbone::p_setMatrixWeights(Eigen::MatrixXd* mx1, 
-									  Eigen::MatrixXd* mx2,
-					 				  Eigen::MatrixXd* mx3/*,
-					 				  Eigen::MatrixXd* mx4*/){
+int neural_backbone::p_setMatrixWeights(Eigen::MatrixXf* mx1, 
+									  Eigen::MatrixXf* mx2,
+					 				  Eigen::MatrixXf* mx3/*,
+					 				  Eigen::MatrixXf* mx4*/){
 	m_w1 = mx1;
 	m_w2 = mx2;
 	m_w3 = mx3;
@@ -80,7 +80,7 @@ int neural_backbone::p_setMatrixWeights(Eigen::MatrixXd* mx1,
 //////////////////////////////////////////////////////////
 //setter for step size
 //////////////////////////////////////////////////////////
-int neural_backbone::p_setStepSize(double i){
+int neural_backbone::p_setStepSize(float i){
 	
 	m_step_size = i;
 	return(0);
@@ -103,7 +103,7 @@ int neural_backbone::p_setInputVector(Eigen::VectorXi* in){
 //	 ReLU function defined in this .cpp file
 //////////////////////////////////////////////////////////
 int neural_backbone::p_l1Pass(void){
-	Eigen::VectorXd n = (*m_inputVec).cast<double>();
+	Eigen::VectorXf n = (*m_inputVec).cast<float>();
 	(*m_v1_w) = (*m_w1) * n;
 	(*m_v1_a) = sigmoid(*m_v1_w);
 	return(0);
@@ -132,7 +132,7 @@ int neural_backbone::p_l4Pass(void){
 //////////////////////////////////////////////////////////
 int neural_backbone::p_softmax(void){
 
-	double size = 0;
+	float size = 0;
 
 	for(int j=0; j<10; j++){
 		size += exp((*m_v3_w)(j));
@@ -151,9 +151,9 @@ int neural_backbone::p_softmax(void){
 //	  [0   ,1	,2	 ,3   ,4   ,5   ,6	   ] index
 //	  [v1_w,v1_a,v2_w,v2_a,v3_w,v3_a,o_v4_w] represent
 //////////////////////////////////////////////////////////
-Eigen::VectorXd** neural_backbone::p_getFPV(void){
+Eigen::VectorXf** neural_backbone::p_getFPV(void){
 
-	Eigen::VectorXd** FPV = new Eigen::VectorXd*[7];
+	Eigen::VectorXf** FPV = new Eigen::VectorXf*[7];
 
 	FPV[0] = m_v1_w;
 	FPV[1] = m_v1_a;
@@ -174,9 +174,9 @@ Eigen::VectorXd** neural_backbone::p_getFPV(void){
 //	  [0   			,1			   ,2	 		  ,3   	         ] index
 //	  [m_gradient_w1, m_gradient_w2, m_gradient_w3, m_gradient_w4] represent
 //////////////////////////////////////////////////////////
-Eigen::MatrixXd** neural_backbone::p_getGradients(void){
+Eigen::MatrixXf** neural_backbone::p_getGradients(void){
 	
-	Eigen::MatrixXd** grads = new Eigen::MatrixXd*[3];
+	Eigen::MatrixXf** grads = new Eigen::MatrixXf*[3];
 
 //	std::ofstream f;
 //	f.open("debug_gradients.txt");
@@ -199,10 +199,10 @@ Eigen::MatrixXd** neural_backbone::p_getGradients(void){
 int neural_backbone::p_backprop(int lbl, int batchsize){
 	
 	//tmp vectors
-	Eigen::VectorXd gradient;
-	Eigen::VectorXd insigmoid;
-	Eigen::VectorXd delta;
-	Eigen::MatrixXd tps;
+	Eigen::VectorXf gradient;
+	Eigen::VectorXf insigmoid;
+	Eigen::VectorXf delta;
+	Eigen::MatrixXf tps;
 
 	//file help
 //	std::ofstream f;
@@ -327,9 +327,9 @@ int neural_backbone::p_updateWeights(void){
 //weight getter
 //	- returns weights
 //////////////////////////////////////////////////////////
-Eigen::MatrixXd** neural_backbone::p_getWeights(void){
+Eigen::MatrixXf** neural_backbone::p_getWeights(void){
 	
-	Eigen::MatrixXd** bruh = new Eigen::MatrixXd*[3];
+	Eigen::MatrixXf** bruh = new Eigen::MatrixXf*[3];
 	bruh[0] = m_w1;
 	bruh[1] = m_w2;
 	bruh[2] = m_w3;
@@ -345,7 +345,7 @@ Eigen::MatrixXd** neural_backbone::p_getWeights(void){
 int neural_backbone::p_runNetwork(void){
 
 	int output = -1;
-	double biggest = 0;
+	float biggest = 0;
 
 	//run network
 	p_l1Pass();	
@@ -370,7 +370,7 @@ int neural_backbone::p_runNetwork(void){
 //	- recursive linear unit activation function
 //    designed to be performed on any vector
 //////////////////////////////////////////////////////////
-Eigen::VectorXd ReLU(Eigen::VectorXd avec){
+Eigen::VectorXf ReLU(Eigen::VectorXf avec){
 
 	for(int i = 0; i<avec.rows(); i++){
 		if(avec(i) < 0)
@@ -386,7 +386,7 @@ Eigen::VectorXd ReLU(Eigen::VectorXd avec){
 //ReLU_prime math function
 //	- recursive linear unit inverse function 
 //////////////////////////////////////////////////////////
-Eigen::VectorXd ReLU_prime(Eigen::VectorXd avec){
+Eigen::VectorXf ReLU_prime(Eigen::VectorXf avec){
 
 	for(int i = 0;i < avec.rows(); i++){
 		if(avec(i) < 0)
@@ -403,9 +403,9 @@ Eigen::VectorXd ReLU_prime(Eigen::VectorXd avec){
 //	- sigmoid function implemented across all units in an
 //	  array. 
 //////////////////////////////////////////////////////////
-Eigen::VectorXd sigmoid(Eigen::VectorXd in){
+Eigen::VectorXf sigmoid(Eigen::VectorXf in){
 	
-	Eigen::VectorXd sig;
+	Eigen::VectorXf sig;
 	sig.resize(in.rows());
 	
 	for(int i=0; i<in.rows(); i++){
@@ -420,11 +420,11 @@ Eigen::VectorXd sigmoid(Eigen::VectorXd in){
 //	- sigmoid function implemented across all units in an
 //	  array returning an eigen vector 
 //////////////////////////////////////////////////////////
-Eigen::VectorXd sigmoid_prime(Eigen::VectorXd in){
+Eigen::VectorXf sigmoid_prime(Eigen::VectorXf in){
 
-	Eigen::VectorXd sigp;
+	Eigen::VectorXf sigp;
 	sigp.resize(in.rows());
-	double sig;
+	float sig;
 
 	for(int i=0; i<in.rows(); i++){
 		sig = 1/(1+exp(-in(i)));
@@ -439,12 +439,10 @@ Eigen::VectorXd sigmoid_prime(Eigen::VectorXd in){
 // - improve speed for activation function by not using
 //	 exp function
 //////////////////////////////////////////////////////////
-double f_exp(double x){
+float f_exp(float x){
 
-	x = 1.0 + (x/256.0);
+	x = 1.0 + x / 256.0;
 
-	x *= x;
-	x *= x;
 	x *= x;
 	x *= x;
 	x *= x;

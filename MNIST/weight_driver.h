@@ -10,7 +10,7 @@
 *				  file doesn't exist.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon Jun 19 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 #ifndef _WEIGHT_FILE_READER_WRITER_
@@ -42,17 +42,17 @@ class file_io{
 
 		int validateFileName(std::string);
 		bool file_exists(std::string);
-		int randomizeWeights(Eigen::MatrixXd**,
-							 Eigen::MatrixXd**,
-							 Eigen::MatrixXd**);
-		int readWeights(Eigen::MatrixXd**,
-						Eigen::MatrixXd**,
-						Eigen::MatrixXd**,
-						/*Eigen::MatrixXd**,*/
+		int randomizeWeights(Eigen::MatrixXf**,
+							 Eigen::MatrixXf**,
+							 Eigen::MatrixXf**);
+		int readWeights(Eigen::MatrixXf**,
+						Eigen::MatrixXf**,
+						Eigen::MatrixXf**,
+						/*Eigen::MatrixXf**,*/
 						std::string);
-		int writeWeights(Eigen::MatrixXd*,
-						 Eigen::MatrixXd*,
-						 Eigen::MatrixXd*,
+		int writeWeights(Eigen::MatrixXf*,
+						 Eigen::MatrixXf*,
+						 Eigen::MatrixXf*,
 						 std::string);
 		//unit test that randomizes weights, outputs 
 		//weights to user defined .txt file then reads

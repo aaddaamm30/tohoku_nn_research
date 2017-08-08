@@ -8,7 +8,7 @@
 *				  pre trained weigths as well.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Fri May 26 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 
@@ -120,7 +120,7 @@ int main(int argc, char **argv){
 		//get command line arguemtns
 		if(argc == 3){
 			int epoc = 1, batch = 100;
-			double step = .001;
+			float step = .001;
 			std::string fh = (std::string)argv[2];
 			
 			std::cout<<"\n====================================";

@@ -12,7 +12,7 @@
 *				  (int) for the labels.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon Jun 19 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 #ifndef _MNIST_ILLITERATE_
@@ -29,7 +29,7 @@ public:
 	mnist_block(int);
 	
 	//getters
-	Eigen::MatrixXd* getImgI(void);
+	Eigen::MatrixXf* getImgI(void);
 	Eigen::VectorXi* getLblI(void);
 	
 
@@ -54,13 +54,13 @@ private:
 	int _readData(void);
 	int _loadUpImgs(void);
 	int _loadUpLbls(void);
-	int _setImgVec(Eigen::MatrixXd*);
+	int _setImgVec(Eigen::MatrixXf*);
 	int _setLblVec(Eigen::VectorXi*);
 	int _setPaths(std::string, std::string);
 	int _set_UnitTest(std::string);
 	
 	//parallel vectors of images and labels
-	Eigen::MatrixXd *_img;
+	Eigen::MatrixXf *_img;
 	Eigen::VectorXi *_lbl;
 
 	std::string _pImgData = "";

@@ -5,7 +5,7 @@
 *				  weight_driver.h with full support
 *
 *	Author		: Adam Loo
-*	Last Edited	: Thu Jun 22 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 
@@ -59,15 +59,15 @@ int file_io::validateFileName(std::string f_name){
 // - Commeted out code is for 4 layer network (500, 1000, 50, 10)
 //	 now implementing 3 layer (500, 1000, 10)
 /////////////////////////////////////////////////////////////////////
-int file_io::randomizeWeights(Eigen::MatrixXd** w1,
-							  Eigen::MatrixXd** w2,
-							  Eigen::MatrixXd** w3/*,
-							  Eigen::MatrixXd** o4*/){
+int file_io::randomizeWeights(Eigen::MatrixXf** w1,
+							  Eigen::MatrixXf** w2,
+							  Eigen::MatrixXf** w3/*,
+							  Eigen::MatrixXf** o4*/){
 
-	*w1 = new Eigen::MatrixXd;
-	*w2 = new Eigen::MatrixXd;
-	*w3 = new Eigen::MatrixXd;
-//	*o4 = new Eigen::MatrixXd;
+	*w1 = new Eigen::MatrixXf;
+	*w2 = new Eigen::MatrixXf;
+	*w3 = new Eigen::MatrixXf;
+//	*o4 = new Eigen::MatrixXf;
 
 	(*w1)->resize(500, 784);
 	(*w2)->resize(1000, 500);
@@ -81,17 +81,17 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 	//randomizing values between -.5 and .5
 	for(int i = 0; i < (*w1)->rows(); i++){
 		for(int j = 0; j < (*w1)->cols(); j++){
-			(**w1)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
+			(**w1)(i,j) = ((((float)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
 	for(int i = 0; i < (*w2)->rows(); i++){
 		for(int j = 0; j < (*w2)->cols(); j++){
-			(**w2)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
+			(**w2)(i,j) = ((((float)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
 	for(int i = 0; i < (*w3)->rows(); i++){
 		for(int j = 0; j < (*w3)->cols(); j++){
-			(**w3)(i,j) = ((((double)std::rand() / RAND_MAX) / 10) - .05);
+			(**w3)(i,j) = ((((float)std::rand() / RAND_MAX) / 10) - .05);
 		}
 	}
 
@@ -109,10 +109,10 @@ int file_io::randomizeWeights(Eigen::MatrixXd** w1,
 /////////////////////////////////////////////////////////////////////
 //file writes data to .txt file according to example.txt doc specs
 /////////////////////////////////////////////////////////////////////
-int file_io::writeWeights(Eigen::MatrixXd* w1,
-						  Eigen::MatrixXd* w2,
-						  Eigen::MatrixXd* w3,
-						  /*Eigen::MatrixXd* o4,*/
+int file_io::writeWeights(Eigen::MatrixXf* w1,
+						  Eigen::MatrixXf* w2,
+						  Eigen::MatrixXf* w3,
+						  /*Eigen::MatrixXf* o4,*/
 						  std::string f_name){
 	
 	//first open the file
@@ -206,16 +206,16 @@ int file_io::writeWeights(Eigen::MatrixXd* w1,
 //
 //	code admitedly bad. doing it char at a time clumsy and ugly
 /////////////////////////////////////////////////////////////////////
-int file_io::readWeights(Eigen::MatrixXd** w1,
-						 Eigen::MatrixXd** w2,
-						 Eigen::MatrixXd** w3,
-						 /*Eigen::MatrixXd** w4,*/
+int file_io::readWeights(Eigen::MatrixXf** w1,
+						 Eigen::MatrixXf** w2,
+						 Eigen::MatrixXf** w3,
+						 /*Eigen::MatrixXf** w4,*/
 						 std::string f_name){
 	//create new matrixes
-	*w1 = new Eigen::MatrixXd;
-	*w2 = new Eigen::MatrixXd;
-	*w3 = new Eigen::MatrixXd;
-//	*w4 = new Eigen::MatrixXd;
+	*w1 = new Eigen::MatrixXf;
+	*w2 = new Eigen::MatrixXf;
+	*w3 = new Eigen::MatrixXf;
+//	*w4 = new Eigen::MatrixXf;
 
 	char tmp[20];
 	char c;
@@ -426,19 +426,19 @@ bool file_io::file_exists(std::string f_name){
 int file_io::run_unit(std::string path){
 
 	//weights to be randomized and written
-	Eigen::MatrixXd* w1=NULL;
-	Eigen::MatrixXd* w2=NULL;
-	Eigen::MatrixXd* w3=NULL;
-//	Eigen::MatrixXd* w4=NULL;
+	Eigen::MatrixXf* w1=NULL;
+	Eigen::MatrixXf* w2=NULL;
+	Eigen::MatrixXf* w3=NULL;
+//	Eigen::MatrixXf* w4=NULL;
 	
 	//weights to be read back in
-	Eigen::MatrixXd* iw1=NULL;
-	Eigen::MatrixXd* iw2=NULL;
-	Eigen::MatrixXd* iw3=NULL;
-//	Eigen::MatrixXd* iw4=NULL;
+	Eigen::MatrixXf* iw1=NULL;
+	Eigen::MatrixXf* iw2=NULL;
+	Eigen::MatrixXf* iw3=NULL;
+//	Eigen::MatrixXf* iw4=NULL;
 	
 	//resize 0 matrix
-	Eigen::MatrixXd tst;
+	Eigen::MatrixXf tst;
 		
 	std::cout << "\n================================";
 	std::cout << "\n===In file_io class unit test===\n";

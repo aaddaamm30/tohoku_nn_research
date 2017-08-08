@@ -10,7 +10,7 @@
 *				  piping and all training/testing.
 *
 *	Author		: Adam Loo
-*	Last Edited	: Mon Jun 19 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 #ifndef _NEURAL_NETWORK_ENGINE_
@@ -33,16 +33,16 @@ class neural_backbone{
 		
 		//constructor
 		neural_backbone(void);
-		int p_setStepSize(double i);
+		int p_setStepSize(float i);
 
 	protected:
 			
 		//setMatrixWeights used by higer level class
 		//to initialize weights to either random or 
 		//read in from the file_io class
-		int p_setMatrixWeights(Eigen::MatrixXd*,
-							 Eigen::MatrixXd*, 
-							 Eigen::MatrixXd*);
+		int p_setMatrixWeights(Eigen::MatrixXf*,
+							 Eigen::MatrixXf*, 
+							 Eigen::MatrixXf*);
 		int p_setInputVector(Eigen::VectorXi*);
 		
 		//pass functions for lots of control
@@ -55,8 +55,8 @@ class neural_backbone{
 		//getters for all vectors and weights that returns
 		//all eigenvectors in an array with the structure
 		//listed below
-		Eigen::VectorXd** p_getFPV(void);
-		Eigen::MatrixXd** p_getGradients(void);
+		Eigen::VectorXf** p_getFPV(void);
+		Eigen::MatrixXf** p_getGradients(void);
 		
 		//backprop operations layer by layer
 		int p_backprop(int,int);
@@ -65,46 +65,46 @@ class neural_backbone{
 		int p_updateWeights();
 		
 		//weight getter
-		Eigen::MatrixXd** p_getWeights(void);
+		Eigen::MatrixXf** p_getWeights(void);
 	
 		//get network analysis of number
 		int p_runNetwork(void);
 
 		//get step size 
-		double p_getStep(void){return(m_step_size);}
+		float p_getStep(void){return(m_step_size);}
 
 	//private attributes of abstract class neural_backbone
 	private:
 	
 		//important components of network
-		double m_step_size;
+		float m_step_size;
 		
 		//matrix to represent weights
-		Eigen::MatrixXd* m_w1 = NULL;
-		Eigen::MatrixXd* m_w2 = NULL;
-		Eigen::MatrixXd* m_w3 = NULL;
-//		Eigen::MatrixXd* m_o_w4 = NULL;
+		Eigen::MatrixXf* m_w1 = NULL;
+		Eigen::MatrixXf* m_w2 = NULL;
+		Eigen::MatrixXf* m_w3 = NULL;
+//		Eigen::MatrixXf* m_o_w4 = NULL;
 
 		//overall input and output vectors
 		Eigen::VectorXi* m_inputVec = new Eigen::VectorXi;
-		Eigen::VectorXd* m_outVec = new Eigen::VectorXd;	
-		Eigen::VectorXd* m_lblVec = new Eigen::VectorXd;
+		Eigen::VectorXf* m_outVec = new Eigen::VectorXf;	
+		Eigen::VectorXf* m_lblVec = new Eigen::VectorXf;
 	
 		//forward pass vectors with and without sigmoid applied
-		Eigen::VectorXd* m_v1_w = new Eigen::VectorXd;		//1 before sigmoid
-		Eigen::VectorXd* m_v1_a = new Eigen::VectorXd;		//1 after sigmoid
-		Eigen::VectorXd* m_v2_w = new Eigen::VectorXd;		//2 before sigmoid
-		Eigen::VectorXd* m_v2_a = new Eigen::VectorXd;		//2 after sigamoid
-		Eigen::VectorXd* m_v3_w = new Eigen::VectorXd;		//3 before sigmoid
-//		Eigen::VectorXd* m_v3_a = new Eigen::VectorXd;		//3 after sigmoid
-//		Eigen::VectorXd* m_o_v4_w = new Eigen::VectorXd;	//raw output layer
-//		Eigen::VectorXd* m_o_v4_a = new Eigen::VectorXd;	//raw output with simoid :(
+		Eigen::VectorXf* m_v1_w = new Eigen::VectorXf;		//1 before sigmoid
+		Eigen::VectorXf* m_v1_a = new Eigen::VectorXf;		//1 after sigmoid
+		Eigen::VectorXf* m_v2_w = new Eigen::VectorXf;		//2 before sigmoid
+		Eigen::VectorXf* m_v2_a = new Eigen::VectorXf;		//2 after sigamoid
+		Eigen::VectorXf* m_v3_w = new Eigen::VectorXf;		//3 before sigmoid
+//		Eigen::VectorXf* m_v3_a = new Eigen::VectorXf;		//3 after sigmoid
+//		Eigen::VectorXf* m_o_v4_w = new Eigen::VectorXf;	//raw output layer
+//		Eigen::VectorXf* m_o_v4_a = new Eigen::VectorXf;	//raw output with simoid :(
 
 		//delta error for each layer
-		Eigen::MatrixXd* m_gradient_w1 = new Eigen::MatrixXd;
-		Eigen::MatrixXd* m_gradient_w2 = new Eigen::MatrixXd;
-		Eigen::MatrixXd* m_gradient_w3 = new Eigen::MatrixXd;
-//		Eigen::MatrixXd* m_gradient_w4 = new Eigen::MatrixXd;
+		Eigen::MatrixXf* m_gradient_w1 = new Eigen::MatrixXf;
+		Eigen::MatrixXf* m_gradient_w2 = new Eigen::MatrixXf;
+		Eigen::MatrixXf* m_gradient_w3 = new Eigen::MatrixXf;
+//		Eigen::MatrixXf* m_gradient_w4 = new Eigen::MatrixXf;
 };
 
 #endif

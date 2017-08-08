@@ -7,7 +7,7 @@
 *				  matrix objects.
 *				  
 *	Author		: Adam Loo
-*	Last Edited	: Thu Jun 22 2017
+*	Last Edited	: Wed Jul 12 2017
 *
 ****************************************************************/
 
@@ -59,7 +59,7 @@ mnist_block::mnist_block(int i){
 ///////////////////////////////////////////////////////////////////////////
 //public getter methods that returns a single case of a an image vector
 ///////////////////////////////////////////////////////////////////////////
-Eigen::MatrixXd* mnist_block::getImgI(void){
+Eigen::MatrixXf* mnist_block::getImgI(void){
 	return(_img);
 }
 
@@ -69,7 +69,7 @@ Eigen::VectorXi* mnist_block::getLblI(void){
 
 ///////////////////////////////////////////////////////////////////////////
 //function that reads any amount of data into
-//appropreate vector<Eigen::MatrixXd> size
+//appropreate vector<Eigen::MatrixXf> size
 ///////////////////////////////////////////////////////////////////////////
 int mnist_block::_readData(void){
 	
@@ -119,7 +119,7 @@ int mnist_block::_loadUpImgs(void){
 		n_cols = switchIt(n_cols);				//get number of colums
 	
 		//create vector
-		Eigen::MatrixXd* m = new Eigen::MatrixXd;
+		Eigen::MatrixXf* m = new Eigen::MatrixXf;
 		m->resize((n_cols*n_rows), n_images);
 		
 		//read through rest of data and input into each matrix
@@ -129,7 +129,7 @@ int mnist_block::_loadUpImgs(void){
 
 					unsigned char tmp = 0;
 					file.read((char*)&tmp, sizeof(tmp));
-					(*m)(((n_rows*j)+k), i) = (double)tmp;
+					(*m)(((n_rows*j)+k), i) = (float)tmp;
 				}
 			}
 		}
@@ -216,7 +216,7 @@ int switchIt(int i){
 int mnist_block::run_unit(void){
 
 	//get working vectors and matrixes
-	Eigen::MatrixXd* image = getImgI();
+	Eigen::MatrixXf* image = getImgI();
 	Eigen::VectorXi* label = getLblI();
 	
 	//get true randomness
@@ -258,7 +258,7 @@ int mnist_block::_setPaths(std::string pics, std::string labels){
 	_pLblData = labels;
 	return(0);
 }
-int mnist_block::_setImgVec(Eigen::MatrixXd* in){
+int mnist_block::_setImgVec(Eigen::MatrixXf* in){
 	_img = in;
 	return(0);
 }
